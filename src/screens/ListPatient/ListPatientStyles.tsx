@@ -8,7 +8,6 @@ export const styles = StyleSheet.create({
   NewPatientBtn: {
     alignItems: "center",
     backgroundColor: "#6ca6f1",
-    color: "#ffffff",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
