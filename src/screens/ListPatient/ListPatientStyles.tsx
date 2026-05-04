@@ -3,10 +3,12 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#E1E8FF",
   },
   NewPatientBtn: {
     alignItems: "center",
     backgroundColor: "#6ca6f1",
+    color: "#ffffff",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
