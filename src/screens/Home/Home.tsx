@@ -2,7 +2,7 @@ import React from "react";
 import { View, ScrollView, Text } from "react-native";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import styles from "../../components/Header/HeaderStyles";
+import HomeCard from "../../components/HomeCard/HomeCard";
 
 export default function Home() {
   return (
@@ -19,7 +19,7 @@ export default function Home() {
         }}
       >
         <View style={{ width: "100%", alignItems: "center" }}>
-          <Text></Text>
+          <HomeCard></HomeCard>
         </View>
       </ScrollView>
 
