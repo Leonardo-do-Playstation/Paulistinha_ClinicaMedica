@@ -7,9 +7,9 @@ import {
   FlatList,
 } from "react-native";
 import { styles } from "./ListPatientStyles";
-import { TitleCard } from "../../components/TitleCard/TitleCard";
-import { PatientCard } from "../../components/PatientCard/PatientCard";
-import { patients } from "../../data/patients";
+import { TitleCard } from "../../../../components/TitleCard/TitleCard";
+import { PatientCard } from "../../../../components/PatientCard/PatientCard";
+import { patients } from "../../../../data/patients";
 
 export default function ListPatient() {
   return (

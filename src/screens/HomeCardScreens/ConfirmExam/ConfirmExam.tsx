@@ -1,9 +1,9 @@
 import React from "react";
-import { TitleCard } from "../../components/TitleCard/TitleCard";
+import { TitleCard } from "../../../components/TitleCard/TitleCard";
 import { FlatList, View } from "react-native";
 import { styles } from "./ConfirmExamStyles";
-import { ConfirmCard } from "../../components/ConfirmCard/ConfirmCard";
-import { consultas } from "../../data/consulta";
+import { ConfirmCard } from "../../../components/ConfirmCard/ConfirmCard";
+import { consultas } from "../../../data/consulta";
 
 export default function ConfirmExam() {
   const hoje = new Date();

@@ -1,19 +1,32 @@
-import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ManagerPatients from "./src/screens/HomeCardScreens/ManagerPatients/ManagerPatients";
+import CancelExam from "./src/screens/HomeCardScreens/CancelExam/CancelExam";
+import FinishExam from "./src/screens/HomeCardScreens/FinishExam/FinishExam";
+import MarkExam from "./src/screens/HomeCardScreens/MarkExam/MarkExam";
+import RealizeExam from "./src/screens/HomeCardScreens/RealizeExam/RealizeExam";
+
 import Home from "./src/screens/Home/Home";
-import ListPatient from "./src/screens/ListPatient/ListPatient";
-import ConfirmExam from "./src/screens/ConfirmExam/ConfirmExam";
+import ConfirmExam from "./src/screens/HomeCardScreens/ConfirmExam/ConfirmExam";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Home></Home>
-    </View>
+    //Routes
+
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Home" component={Home} />
+        
+        <Stack.Screen name="ManagerPatients" component={ManagerPatients} />
+        <Stack.Screen name="MarkExam" component={MarkExam} />
+        <Stack.Screen name="ConfirmExam" component={ConfirmExam} />
+        <Stack.Screen name="RealizeExam" component={RealizeExam} />
+        <Stack.Screen name="FinishExam" component={FinishExam} />
+        <Stack.Screen name="CancelExam" component={CancelExam} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E5ECFF',
-  },
-});
