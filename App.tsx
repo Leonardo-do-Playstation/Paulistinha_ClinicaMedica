@@ -6,6 +6,7 @@ import CancelExam from "./src/screens/HomeCardScreens/CancelExam/CancelExam";
 import FinishExam from "./src/screens/HomeCardScreens/FinishExam/FinishExam";
 import MarkExam from "./src/screens/HomeCardScreens/MarkExam/MarkExam";
 import RealizeExam from "./src/screens/HomeCardScreens/RealizeExam/RealizeExam";
+import CreatePatient from "./src/screens/HomeCardScreens/ManagerPatients/CreatePatients/CreatePatient";
 
 import Home from "./src/screens/Home/Home";
 import ConfirmExam from "./src/screens/HomeCardScreens/ConfirmExam/ConfirmExam";
@@ -26,6 +27,8 @@ export default function App() {
         <Stack.Screen name="RealizeExam" component={RealizeExam} />
         <Stack.Screen name="FinishExam" component={FinishExam} />
         <Stack.Screen name="CancelExam" component={CancelExam} />
+        <Stack.Screen name="CreatePatient" component={CreatePatient} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

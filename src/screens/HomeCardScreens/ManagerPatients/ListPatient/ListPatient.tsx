@@ -7,27 +7,24 @@ import {
   FlatList,
 } from "react-native";
 import { styles } from "./ListPatientStyles";
-import { TitleCard } from "../components/TitleCard/TitleCard";
-import { PatientCard } from "../components/PatientCard/PatientCard";
-import { patients } from "../data/patients";
+import { PatientCard } from "../../../../components/PatientCard/PatientCard";
+import { patients } from "../../../../data/patients";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ListPatient() {
+  const navigation: any = useNavigation();
+
   return (
     <View style={styles.container}>
-      <TitleCard
-        title="Pacientes"
-        subtitle="Gerenciar pacientes"
-        backgroundColor="#2F80ED"
-        onBack={() => navigation.back()}
-      />
-
       <View style={{ padding: 15 }}>
-        <TouchableOpacity style={styles.NewPatientBtn}>
+        <TouchableOpacity
+          style={styles.NewPatientBtn}
+          onPress={() => navigation.navigate("CreatePatient")}
+        >
           <Text style={{ fontSize: 24, color: "#ffffff" }}>
             + Novo Paciente
           </Text>
         </TouchableOpacity>
-
         <TextInput style={styles.TextInput} placeholder="🔍 Buscar Pacientes" />
       </View>
 
