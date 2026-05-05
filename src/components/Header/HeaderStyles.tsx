@@ -16,8 +16,8 @@ const styles = StyleSheet.create({
     padding: 10,
     zIndex: 10,
 
-    borderBottomLeftRadius: 100,
-    borderBottomRightRadius: 100,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
 
   headerText: {

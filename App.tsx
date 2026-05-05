@@ -6,7 +6,7 @@ import ConfirmExam from "./src/screens/ConfirmExam/ConfirmExam";
 export default function App() {
   return (
     <View style={styles.container}>
-      <ConfirmExam></ConfirmExam>
+      <Home></Home>
     </View>
   );
 }
@@ -14,6 +14,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#E5ECFF',
   },
 });
