@@ -4,8 +4,10 @@ import { FlatList, View } from "react-native";
 import { styles } from "./ConfirmExamStyles";
 import { ConfirmCard } from "../../../components/ConfirmCard/ConfirmCard";
 import { consultas } from "../../../data/consulta";
+import { useNavigation } from '@react-navigation/native';
 
 export default function ConfirmExam() {
+  const navigation = useNavigation();
   const hoje = new Date();
   const dataFormatada = hoje.toLocaleDateString("pt-BR");
 
@@ -15,7 +17,7 @@ export default function ConfirmExam() {
         title="Confirmação de Exame"
         subtitle={`Hoje, ${dataFormatada}`}
         backgroundColor="#4F39F6"
-        onBack={() => navigation.back()}
+        onBack={() => navigation.goBack()}
       ></TitleCard>
       <FlatList
         data={consultas}
