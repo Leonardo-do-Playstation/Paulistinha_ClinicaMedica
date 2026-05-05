@@ -13,7 +13,7 @@ export default function ManagerPatients() {
         <TitleCard
           title="Clientes"
           subtitle="Gerenciar Pacientes"
-          backgroundColor="#4F39F6"
+          backgroundColor="#155DFC"
           onBack={() => navigation.goBack()}
         />
         <ListPatient />
