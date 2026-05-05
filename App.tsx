@@ -10,6 +10,7 @@ import CreatePatient from "./src/screens/HomeCardScreens/ManagerPatients/CreateP
 
 import Home from "./src/screens/Home/Home";
 import ConfirmExam from "./src/screens/HomeCardScreens/ConfirmExam/ConfirmExam";
+import CancelDetails from "./src/screens/HomeCardScreens/CancelExam/CancelDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,7 @@ export default function App() {
         <Stack.Screen name="RealizeExam" component={RealizeExam} />
         <Stack.Screen name="FinishExam" component={FinishExam} />
         <Stack.Screen name="CancelExam" component={CancelExam} />
+        <Stack.Screen name="CancelDetails" component={CancelDetails} />
         <Stack.Screen name="CreatePatient" component={CreatePatient} />
         
       </Stack.Navigator>
