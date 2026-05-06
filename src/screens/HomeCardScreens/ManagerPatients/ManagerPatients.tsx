@@ -9,15 +9,13 @@ export default function ManagerPatients() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#E5ECFF" }}>
-      <ScrollView>
-        <TitleCard
-          title="Clientes"
-          subtitle="Gerenciar Pacientes"
-          backgroundColor="#155DFC"
-          onBack={() => navigation.goBack()}
-        />
-        <ListPatient />
-      </ScrollView>
+      <TitleCard
+        title="Clientes"
+        subtitle="Gerenciar Pacientes"
+        backgroundColor="#155DFC"
+        onBack={() => navigation.goBack()}
+      />
+      <ListPatient />
     </View>
   );
 }

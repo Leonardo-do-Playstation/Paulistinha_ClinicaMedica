@@ -1,12 +1,8 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet, Alert
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { TitleCard } from "../../../../components/TitleCard/TitleCard";
+import { styles } from "./CreatePatientStyle";
 
 export default function CreatePatient() {
   const navigation: any = useNavigation();
@@ -16,69 +12,57 @@ export default function CreatePatient() {
   const [cpf, setCpf] = useState("");
 
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: "#E5ECFF" }}>
-      <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 20 }}>
-        Novo Paciente
-      </Text>
+    <View style={{ flex: 1, backgroundColor: "#E5ECFF" }}>
+      <TitleCard
+        title="Novo Paciente"
+        subtitle="Preencha os dados do paciente"
+        backgroundColor="#155DFC"
+        onBack={() => navigation.goBack()}
+      ></TitleCard>
 
-      <TextInput
-        placeholder="Nome"
-        value={name}
-        onChangeText={setName}
-        style={inputStyle}
-      />
+      <View style={{ padding: 15 }}>
+        <TextInput
+          placeholder="Nome"
+          value={name}
+          onChangeText={setName}
+          style={styles.inputStyle}
+        />
 
-      <TextInput
-        placeholder="Telefone"
-        value={phone}
-        onChangeText={setPhone}
-        style={inputStyle}
-      />
+        <TextInput
+          placeholder="Telefone"
+          value={phone}
+          onChangeText={setPhone}
+          style={styles.inputStyle}
+        />
 
-      <TextInput
-        placeholder="CPF"
-        value={cpf}
-        onChangeText={setCpf}
-        style={inputStyle}
-      />
+        <TextInput
+          placeholder="CPF"
+          value={cpf}
+          onChangeText={setCpf}
+          style={styles.inputStyle}
+        />
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          if (!name || !phone || !cpf) {
-            alert("Preencha todos os campos!");
-            return;
-          }
-          console.log({ name, phone, cpf });
-          navigation.goBack();
-        }}
-      >
-        <Text style={{ color: "#fff", fontWeight: "bold" }}>Salvar</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            if (!name || !phone || !cpf) {
+              alert("Preencha todos os campos!");
+              return;
+            }
+            console.log({ name, phone, cpf });
+            navigation.goBack();
+          }}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>Salvar</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: "#ccc", marginTop: 10 }]}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={{ color: "#333", fontWeight: "bold" }}>Cancelar</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#ccc", marginTop: 10 }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={{ color: "#333", fontWeight: "bold" }}>Cancelar</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
-
-const inputStyle = {
-  backgroundColor: "#fff",
-  padding: 12,
-  borderRadius: 10,
-  marginBottom: 10,
-};
-
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: "#4F39F6",
-    padding: 15,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 20,
-  },
-});
