@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet, Alert
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 export default function CreatePatient() {
@@ -11,7 +17,6 @@ export default function CreatePatient() {
 
   return (
     <View style={{ flex: 1, padding: 20, backgroundColor: "#E5ECFF" }}>
-
       <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 20 }}>
         Novo Paciente
       </Text>
@@ -37,27 +42,26 @@ export default function CreatePatient() {
         style={inputStyle}
       />
 
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.button}
         onPress={() => {
+          if (!name || !phone || !cpf) {
+            alert("Preencha todos os campos!");
+            return;
+          }
           console.log({ name, phone, cpf });
           navigation.goBack();
         }}
       >
-        <Text style={{ color: "#fff", fontWeight: "bold" }}>
-          Salvar
-        </Text>
+        <Text style={{ color: "#fff", fontWeight: "bold" }}>Salvar</Text>
       </TouchableOpacity>
 
-        <TouchableOpacity
+      <TouchableOpacity
         style={[styles.button, { backgroundColor: "#ccc", marginTop: 10 }]}
         onPress={() => navigation.goBack()}
       >
-        <Text style={{ color: "#333", fontWeight: "bold" }}>
-          Cancelar
-        </Text>
+        <Text style={{ color: "#333", fontWeight: "bold" }}>Cancelar</Text>
       </TouchableOpacity>
-
     </View>
   );
 }
