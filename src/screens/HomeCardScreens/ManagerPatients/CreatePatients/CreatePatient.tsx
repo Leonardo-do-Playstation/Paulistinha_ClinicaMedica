@@ -49,6 +49,15 @@ export default function CreatePatient() {
         </Text>
       </TouchableOpacity>
 
+        <TouchableOpacity
+        style={[styles.button, { backgroundColor: "#ccc", marginTop: 10 }]}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={{ color: "#333", fontWeight: "bold" }}>
+          Cancelar
+        </Text>
+      </TouchableOpacity>
+
     </View>
   );
 }
