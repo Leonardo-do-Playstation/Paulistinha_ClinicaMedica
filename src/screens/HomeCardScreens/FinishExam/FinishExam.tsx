@@ -34,7 +34,7 @@ export default function FinishExam() {
     <TouchableOpacity
       style={styles.card}
       onPress={() =>
-        navigation.navigate("FinishDetails", { exam: item })
+        navigation.navigate("FinishExamDetail", { exam: item })
       }
     >
       <View style={styles.cardHeader}>
