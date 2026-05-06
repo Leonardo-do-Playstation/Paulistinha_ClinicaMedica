@@ -3,8 +3,8 @@ import { TitleCard } from "../../../components/TitleCard/TitleCard";
 import { FlatList, View } from "react-native";
 import { styles } from "./ConfirmExamStyles";
 import { ConfirmCard } from "../../../components/ConfirmCard/ConfirmCard";
-import { consultas } from "../../../data/consulta";
-import { useNavigation } from '@react-navigation/native';
+import { consults } from "../../../data/consults";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ConfirmExam() {
   const navigation = useNavigation();
@@ -20,7 +20,7 @@ export default function ConfirmExam() {
         onBack={() => navigation.goBack()}
       ></TitleCard>
       <FlatList
-        data={consultas}
+        data={consults}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ padding: 15 }}
         renderItem={({ item }) => (

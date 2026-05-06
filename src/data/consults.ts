@@ -1,4 +1,4 @@
-export type Consulta = {
+export type Consult = {
   id: number;
   name: string;
   doctor: string;
@@ -7,7 +7,7 @@ export type Consulta = {
   phone: string;
 };
 
-export const consultas: Consulta[] = [
+export const consults: Consult[] = [
   {
     id: 1,
     name: "Maria Silva",
