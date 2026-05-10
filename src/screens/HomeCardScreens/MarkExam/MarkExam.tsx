@@ -10,29 +10,13 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { TitleCard } from "../../../components/TitleCard/TitleCard";
 import { styles } from "./MarkExamStyle";
+import { PatientCard } from "../../../components/PatientCard/PatientCard";
+import { patients } from "../../../data/patients";
 
 export default function MarkExam() {
   const navigation: any = useNavigation();
 
   const [step, setStep] = useState(1);
-
-  const patients = [
-    {
-      id: 1,
-      name: "Maria Silva",
-      image: "https://i.pravatar.cc/100?u=1",
-    },
-    {
-      id: 2,
-      name: "João Pereira",
-      image: "https://i.pravatar.cc/100?u=2",
-    },
-    {
-      id: 3,
-      name: "Carlos Souza",
-      image: "https://i.pravatar.cc/100?u=3",
-    },
-  ];
 
   const specialties = [
     "Cardiologia",
@@ -72,34 +56,21 @@ export default function MarkExam() {
       id: index + 1,
       fullDate: formattedDate,
 
-      schedules: Array.from(
-        { length: 10 },
-        (_, hourIndex) => {
-          const hour = 8 + hourIndex;
+      schedules: Array.from({ length: 10 }, (_, hourIndex) => {
+        const hour = 8 + hourIndex;
 
-          const statuses = [
-            "Livre",
-            "Confirmado",
-            "Marcado",
-            "Indisponível",
-          ];
+        const statuses = ["Livre", "Confirmado", "Marcado", "Indisponível"];
 
-          return {
-            time: `${hour}:00`,
-            status: statuses[(hour + index) % 4],
-          };
-        }
-      ),
+        return {
+          time: `${hour}:00`,
+          status: statuses[(hour + index) % 4],
+        };
+      }),
     };
   });
 
   const renderSteps = () => {
-    const steps = [
-      "Paciente",
-      "Especialidade",
-      "Médico",
-      "Agenda",
-    ];
+    const steps = ["Paciente", "Especialidade", "Médico", "Agenda"];
 
     return (
       <View style={styles.stepsCard}>
@@ -108,21 +79,16 @@ export default function MarkExam() {
             <View
               style={[
                 styles.stepCircle,
-                step === index + 1
-                  ? styles.stepActive
-                  : styles.stepInactive,
+                step === index + 1 ? styles.stepActive : styles.stepInactive,
               ]}
             >
-              <Text style={styles.stepNumber}>
-                {index + 1}
-              </Text>
+              <Text style={styles.stepNumber}>{index + 1}</Text>
             </View>
 
             <Text
               style={[
                 styles.stepText,
-                step === index + 1 &&
-                  styles.stepTextActive,
+                step === index + 1 && styles.stepTextActive,
               ]}
             >
               {item}
@@ -151,26 +117,17 @@ export default function MarkExam() {
           keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.patientCard}
+            <PatientCard
+              name={item.name}
+              phone={item.phone}
+              cpf={item.cpf}
               onPress={() => setStep(2)}
-            >
-              <Image
-                source={{ uri: item.image }}
-                style={styles.avatar}
-              />
-
-              <Text style={styles.patientName}>
-                {item.name}
-              </Text>
-            </TouchableOpacity>
+            />
           )}
           ListFooterComponent={
             <TouchableOpacity
               style={styles.newPatientCard}
-              onPress={() =>
-                navigation.navigate("CreatePatient")
-              }
+              onPress={() => navigation.navigate("CreatePatient")}
             >
               <Text style={styles.newPatientText}>
                 + Cadastrar Novo Cliente
@@ -189,9 +146,7 @@ export default function MarkExam() {
               style={styles.specialtyCard}
               onPress={() => setStep(3)}
             >
-              <Text style={styles.specialtyText}>
-                {item}
-              </Text>
+              <Text style={styles.specialtyText}>{item}</Text>
             </TouchableOpacity>
           ))}
 
@@ -213,19 +168,12 @@ export default function MarkExam() {
               style={styles.doctorCard}
               onPress={() => setStep(4)}
             >
-              <Image
-                source={{ uri: item.image }}
-                style={styles.avatar}
-              />
+              <Image source={{ uri: item.image }} style={styles.avatar} />
 
               <View>
-                <Text style={styles.doctorName}>
-                  {item.name}
-                </Text>
+                <Text style={styles.doctorName}>{item.name}</Text>
 
-                <Text style={styles.doctorSpecialty}>
-                  {item.specialty}
-                </Text>
+                <Text style={styles.doctorSpecialty}>{item.specialty}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -243,9 +191,7 @@ export default function MarkExam() {
       {step === 4 && (
         <View style={{ flex: 1 }}>
           <View style={styles.legendCard}>
-            <Text style={styles.legendTitle}>
-              📅 Agenda de 2 meses
-            </Text>
+            <Text style={styles.legendTitle}>📅 Agenda de 2 meses</Text>
 
             <View style={styles.legendRow}>
               <Text>🟩 Livre</Text>
@@ -262,38 +208,28 @@ export default function MarkExam() {
             contentContainerStyle={styles.list}
             renderItem={({ item }) => (
               <TouchableOpacity style={styles.dayCard}>
-                <Text style={styles.dayText}>
-                  {item.fullDate}
-                </Text>
+                <Text style={styles.dayText}>{item.fullDate}</Text>
 
-            <View style={styles.scheduleContainer}>
-              {item.schedules.map(
-              (schedule: any, index: number) => (
-            <View
-              key={index}
-              style={[
-                styles.scheduleBadge,
+                <View style={styles.scheduleContainer}>
+                  {item.schedules.map((schedule: any, index: number) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.scheduleBadge,
 
-                schedule.status === "Livre" &&
-                  styles.greenCard,
+                        schedule.status === "Livre" && styles.greenCard,
 
-                schedule.status === "Confirmado" &&
-                  styles.blueCard,
+                        schedule.status === "Confirmado" && styles.blueCard,
 
-                schedule.status === "Marcado" &&
-                  styles.yellowCard,
+                        schedule.status === "Marcado" && styles.yellowCard,
 
-                schedule.status === "Indisponível" &&
-                  styles.redCard,
-              ]}
-            >
-              <Text style={styles.scheduleText}>
-                {schedule.time}
-              </Text>
-            </View>
-            )
-            )}
-            </View>
+                        schedule.status === "Indisponível" && styles.redCard,
+                      ]}
+                    >
+                      <Text style={styles.scheduleText}>{schedule.time}</Text>
+                    </View>
+                  ))}
+                </View>
               </TouchableOpacity>
             )}
           />
@@ -313,9 +249,7 @@ export default function MarkExam() {
                 navigation.goBack();
               }}
             >
-              <Text style={styles.confirmText}>
-                Confirmar Agendamento
-              </Text>
+              <Text style={styles.confirmText}>Confirmar Agendamento</Text>
             </TouchableOpacity>
           </View>
         </View>

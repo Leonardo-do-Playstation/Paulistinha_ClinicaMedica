@@ -33,7 +33,12 @@ export default function ListPatient() {
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ padding: 15 }}
         renderItem={({ item }) => (
-          <PatientCard name={item.name} phone={item.phone} cpf={item.cpf} />
+          <PatientCard
+            name={item.name}
+            phone={item.phone}
+            cpf={item.cpf}
+            showButtons={true}
+          />
         )}
       />
     </View>
