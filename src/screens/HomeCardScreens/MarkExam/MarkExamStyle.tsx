@@ -151,11 +151,6 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  legendRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
   dayCard: {
     flex: 1,
     padding: 15,
@@ -178,12 +173,15 @@ export const styles = StyleSheet.create({
     backgroundColor: "#BFDBFE",
   },
 
-  yellowCard: {
-    backgroundColor: "#FEF08A",
+  redCard: {
+    backgroundColor: "#fc0000",
+  },
+  blackCard: {
+    backgroundColor: "#1F2937",
   },
 
-  redCard: {
-    backgroundColor: "#FECACA",
+  orangeCard: {
+    backgroundColor: "#F97316",
   },
 
   dayText: {
@@ -242,5 +240,28 @@ export const styles = StyleSheet.create({
   scheduleText: {
     fontSize: 14,
     fontWeight: "bold",
+  },
+  legendRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "48%",
+  },
+
+  legendColor: {
+    width: 14,
+    height: 14,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+
+  legendText: {
+    fontSize: 12,
+    flexShrink: 1,
   },
 });

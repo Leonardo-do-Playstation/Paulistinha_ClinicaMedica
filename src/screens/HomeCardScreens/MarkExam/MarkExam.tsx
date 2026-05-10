@@ -41,6 +41,20 @@ export default function MarkExam() {
     },
   ];
 
+  const legends = [
+    { label: "Livre", style: styles.greenCard },
+    { label: "Não Atende", style: styles.blackCard },
+    { label: "Marcado", style: styles.blueCard },
+    {
+      label: "Cancelado Pelo Paciente",
+      style: styles.orangeCard,
+    },
+    {
+      label: "Cancelado Pelo Médico",
+      style: styles.redCard,
+    },
+  ];
+
   const days = Array.from({ length: 60 }, (_, index) => {
     const date = new Date();
 
@@ -59,7 +73,13 @@ export default function MarkExam() {
       schedules: Array.from({ length: 10 }, (_, hourIndex) => {
         const hour = 8 + hourIndex;
 
-        const statuses = ["Livre", "Confirmado", "Marcado", "Indisponível"];
+        const statuses = [
+          "Livre",
+          "Não Atende",
+          "Marcado",
+          "Cancelado Pelo Paciente",
+          "Cancelado Pelo Médico",
+        ];
 
         return {
           time: `${hour}:00`,
@@ -194,10 +214,13 @@ export default function MarkExam() {
             <Text style={styles.legendTitle}>📅 Agenda de 2 meses</Text>
 
             <View style={styles.legendRow}>
-              <Text>🟩 Livre</Text>
-              <Text>🟦 Confirmado</Text>
-              <Text>🟨 Marcado</Text>
-              <Text>🟥 Indisponível</Text>
+              {legends.map((item, index) => (
+                <View key={index} style={styles.legendItem}>
+                  <View style={[styles.legendColor, item.style]} />
+
+                  <Text style={styles.legendText}>{item.label}</Text>
+                </View>
+              ))}
             </View>
           </View>
 
@@ -219,14 +242,28 @@ export default function MarkExam() {
 
                         schedule.status === "Livre" && styles.greenCard,
 
-                        schedule.status === "Confirmado" && styles.blueCard,
+                        schedule.status === "Não Atende" && styles.blackCard,
 
-                        schedule.status === "Marcado" && styles.yellowCard,
+                        schedule.status === "Marcado" && styles.blueCard,
 
-                        schedule.status === "Indisponível" && styles.redCard,
+                        schedule.status === "Cancelado Pelo Paciente" &&
+                          styles.orangeCard,
+
+                        schedule.status === "Cancelado Pelo Médico" &&
+                          styles.redCard,
                       ]}
                     >
-                      <Text style={styles.scheduleText}>{schedule.time}</Text>
+                      <Text
+                        style={[
+                          styles.scheduleText,
+
+                          schedule.status === "Não Atende" && {
+                            color: "#FFF",
+                          },
+                        ]}
+                      >
+                        {schedule.time}
+                      </Text>
                     </View>
                   ))}
                 </View>
