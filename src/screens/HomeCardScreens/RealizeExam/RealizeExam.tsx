@@ -10,7 +10,7 @@ export default function RealizeExam() {
   const navigation = useNavigation();
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#E5ECFF" }}>
+    <View style={{ flex: 1, backgroundColor: "#F3F4F6" }}>
       <TitleCard
         title="Realizar Consulta"
         subtitle={"Pacientes confirmados"}

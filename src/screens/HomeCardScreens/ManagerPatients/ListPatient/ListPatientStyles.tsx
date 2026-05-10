@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E1E8FF",
+    backgroundColor: "#F3F4F6",
   },
   NewPatientBtn: {
     alignItems: "center",
@@ -16,12 +16,12 @@ export const styles = StyleSheet.create({
   },
   TextInput: {
     width: "90%",
-  alignSelf: "center",
-  backgroundColor: "#fff",
-  borderRadius: 12,
-  paddingHorizontal: 15,
-  paddingVertical: 12,
-  marginTop: 15,
-  elevation: 2,
+    alignSelf: "center",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    marginTop: 15,
+    elevation: 2,
   },
 });

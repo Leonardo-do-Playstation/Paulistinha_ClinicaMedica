@@ -46,7 +46,7 @@ export default function CreatePatient() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#E5ECFF" }}>
+    <View style={{ flex: 1, backgroundColor: "#F3F4F6" }}>
       <TitleCard
         title="Cadastro de Cliente"
         subtitle="Dados básicos do paciente"
@@ -59,9 +59,7 @@ export default function CreatePatient() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.formCard}>
-          <Text style={styles.label}>
-            Nome Completo *
-          </Text>
+          <Text style={styles.label}>Nome Completo *</Text>
 
           <TextInput
             placeholder="Digite o nome completo"
@@ -70,9 +68,7 @@ export default function CreatePatient() {
             style={styles.inputStyle}
           />
 
-          <Text style={styles.label}>
-            CPF *
-          </Text>
+          <Text style={styles.label}>CPF *</Text>
 
           <TextInput
             placeholder="000.000.000-00"
@@ -81,9 +77,7 @@ export default function CreatePatient() {
             style={styles.inputStyle}
           />
 
-          <Text style={styles.label}>
-            Data de Nascimento *
-          </Text>
+          <Text style={styles.label}>Data de Nascimento *</Text>
 
           <TextInput
             placeholder="dd/mm/aaaa"
@@ -92,9 +86,7 @@ export default function CreatePatient() {
             style={styles.inputStyle}
           />
 
-          <Text style={styles.label}>
-            Telefone *
-          </Text>
+          <Text style={styles.label}>Telefone *</Text>
 
           <TextInput
             placeholder="(00) 00000-0000"
@@ -103,9 +95,7 @@ export default function CreatePatient() {
             style={styles.inputStyle}
           />
 
-          <Text style={styles.label}>
-            Email
-          </Text>
+          <Text style={styles.label}>Email</Text>
 
           <TextInput
             placeholder="email@exemplo.com"
@@ -114,9 +104,7 @@ export default function CreatePatient() {
             style={styles.inputStyle}
           />
 
-          <Text style={styles.label}>
-            Endereço
-          </Text>
+          <Text style={styles.label}>Endereço</Text>
 
           <TextInput
             placeholder="Rua, número, bairro"
@@ -127,9 +115,7 @@ export default function CreatePatient() {
 
           <View style={styles.row}>
             <View style={styles.cityContainer}>
-              <Text style={styles.label}>
-                Cidade
-              </Text>
+              <Text style={styles.label}>Cidade</Text>
 
               <TextInput
                 placeholder="Cidade"
@@ -140,9 +126,7 @@ export default function CreatePatient() {
             </View>
 
             <View style={styles.ufContainer}>
-              <Text style={styles.label}>
-                UF
-              </Text>
+              <Text style={styles.label}>UF</Text>
 
               <TextInput
                 placeholder="UF"
@@ -154,9 +138,7 @@ export default function CreatePatient() {
             </View>
           </View>
 
-          <Text style={styles.label}>
-            Observações
-          </Text>
+          <Text style={styles.label}>Observações</Text>
 
           <TextInput
             placeholder="Alergias, condições especiais..."
@@ -172,18 +154,11 @@ export default function CreatePatient() {
               style={styles.cancelButton}
               onPress={() => navigation.goBack()}
             >
-              <Text style={styles.cancelText}>
-                Cancelar
-              </Text>
+              <Text style={styles.cancelText}>Cancelar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={handleSave}
-            >
-              <Text style={styles.saveText}>
-                Salvar
-              </Text>
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <Text style={styles.saveText}>Salvar</Text>
             </TouchableOpacity>
           </View>
         </View>

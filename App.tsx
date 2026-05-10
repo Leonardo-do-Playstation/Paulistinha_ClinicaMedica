@@ -13,6 +13,7 @@ import Home from "./src/screens/Home/Home";
 import ConfirmExam from "./src/screens/HomeCardScreens/ConfirmExam/ConfirmExam";
 import CancelDetails from "./src/screens/HomeCardScreens/CancelExam/CancelDetails";
 import FinishExamDetail from "./src/screens/HomeCardScreens/FinishExam/FinishExamDetail";
+import Login from "./src/screens/Login/Login";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ export default function App() {
 
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={Home} />
 
         <Stack.Screen name="ManagerPatients" component={ManagerPatients} />
