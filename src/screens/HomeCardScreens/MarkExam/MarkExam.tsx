@@ -57,25 +57,41 @@ export default function MarkExam() {
     },
   ];
 
-  const days = Array.from({ length: 60 }, (_, index) => ({
-    id: index + 1,
-    day: `${index + 1}`,
-    schedules: Array.from({ length: 10 }, (_, hourIndex) => {
-      const hour = 8 + hourIndex;
+  const days = Array.from({ length: 60 }, (_, index) => {
+    const date = new Date();
 
-      const statuses = [
-        "Livre",
-        "Confirmado",
-        "Marcado",
-        "Indisponível",
-      ];
+    date.setDate(date.getDate() + index);
 
-      return {
-        time: `${hour}:00`,
-        status: statuses[(hour + index) % 4],
-      };
-    }),
-  }));
+    const formattedDate = date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    return {
+      id: index + 1,
+      fullDate: formattedDate,
+
+      schedules: Array.from(
+        { length: 10 },
+        (_, hourIndex) => {
+          const hour = 8 + hourIndex;
+
+          const statuses = [
+            "Livre",
+            "Confirmado",
+            "Marcado",
+            "Indisponível",
+          ];
+
+          return {
+            time: `${hour}:00`,
+            status: statuses[(hour + index) % 4],
+          };
+        }
+      ),
+    };
+  });
 
   const renderSteps = () => {
     const steps = [
@@ -247,7 +263,7 @@ export default function MarkExam() {
             renderItem={({ item }) => (
               <TouchableOpacity style={styles.dayCard}>
                 <Text style={styles.dayText}>
-                  Dia {item.day}
+                  {item.fullDate}
                 </Text>
 
             <View style={styles.scheduleContainer}>
