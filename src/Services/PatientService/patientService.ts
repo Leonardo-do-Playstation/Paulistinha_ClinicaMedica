@@ -12,20 +12,7 @@ import {
   QueryConstraint,
 } from "firebase/firestore";
 import { db } from "../../Config/Firebase";
-
-export type Patient = {
-  id?: string;
-  name: string;
-  cpf: string;
-  birthDate: string;
-  phone: string;
-  email?: string;
-  address?: string;
-  city?: string;
-  uf?: string;
-  observations?: string;
-  createdAt?: Date;
-};
+import { Patient } from "../../data/patients";
 
 const COLLECTION = "patients";
 const patientsRef = collection(db, COLLECTION);
