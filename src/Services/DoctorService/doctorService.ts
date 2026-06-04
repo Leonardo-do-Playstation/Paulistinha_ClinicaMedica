@@ -3,9 +3,6 @@ import {
   getDocs,
   getDoc,
   doc,
-  query,
-  orderBy,
-  where,
 } from "firebase/firestore";
 import { db } from "../../Config/Firebase";
 import { Doctor } from "../../data/types/doctorTypes";
@@ -14,9 +11,9 @@ const COLLECTION = "doctors";
 const doctorsRef = collection(db, COLLECTION);
 
 export const getDoctors = async (): Promise<Doctor[]> => {
-  const q = query(doctorsRef, orderBy("name"));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Doctor);
+  const snapshot = await getDocs(doctorsRef);
+  const doctors = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Doctor);
+  return doctors.sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
 };
 
 export const getDoctorById = async (id: string): Promise<Doctor | null> => {
@@ -29,18 +26,21 @@ export const getDoctorById = async (id: string): Promise<Doctor | null> => {
 export const getDoctorsBySpecialty = async (
   specialty: string,
 ): Promise<Doctor[]> => {
-  const q = query(
-    doctorsRef,
-    where("specialty", "==", specialty),
-    orderBy("name"),
+  const doctors = await getDoctors();
+  return doctors.filter(
+    (d) => d.specialty?.trim().toLowerCase() === specialty.trim().toLowerCase(),
   );
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Doctor);
 };
 
 export const getSpecialties = async (): Promise<string[]> => {
   const doctors = await getDoctors();
-  const unique = [...new Set(doctors.map((d) => d.specialty))].sort();
+  const unique = [
+    ...new Set(
+      doctors
+        .map((d) => d.specialty?.trim())
+        .filter((s): s is string => !!s),
+    ),
+  ].sort();
   return unique;
 };
 

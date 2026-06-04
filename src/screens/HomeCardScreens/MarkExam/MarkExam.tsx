@@ -31,12 +31,12 @@ export default function MarkExam() {
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const [patients, setPatients] = useState<Patient[]>([]);
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
-
 
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
@@ -45,7 +45,6 @@ export default function MarkExam() {
   const [selectedTime, setSelectedTime] = useState("");
   const [availableHours, setAvailableHours] = useState<string[]>([]);
 
- 
   const days = Array.from({ length: 60 }, (_, index) => {
     const date = new Date();
     date.setDate(date.getDate() + index);
@@ -64,19 +63,28 @@ export default function MarkExam() {
     { label: "Cancelado Pelo Médico", style: styles.redCard },
   ];
 
-
   useEffect(() => {
     const load = async () => {
       try {
         setLoading(true);
+        setLoadError(null);
+        console.log("[MarkExam] Carregando pacientes e especialidades...");
+
         const [patientsData, specialtiesData] = await Promise.all([
           getPatients(),
           getSpecialties(),
         ]);
+
+        console.log("[MarkExam] Pacientes:", patientsData.length, JSON.stringify(patientsData));
+        console.log("[MarkExam] Especialidades:", specialtiesData.length, JSON.stringify(specialtiesData));
+
         setPatients(patientsData);
         setSpecialties(specialtiesData);
-      } catch {
-        Alert.alert("Erro", "Não foi possível carregar os dados.");
+      } catch (err: any) {
+        const msg = err?.message ?? String(err);
+        console.error("[MarkExam] ERRO ao carregar:", msg);
+        setLoadError(msg);
+        Alert.alert("Erro ao carregar", msg);
       } finally {
         setLoading(false);
       }
@@ -84,24 +92,35 @@ export default function MarkExam() {
     load();
   }, []);
 
-
   useEffect(() => {
     if (!selectedSpecialty) return;
     const load = async () => {
       try {
         setLoading(true);
+        console.log("[MarkExam] Buscando médicos para:", selectedSpecialty);
+
         const all = await getDoctors();
+        console.log("[MarkExam] Total médicos no Firestore:", all.length, JSON.stringify(all));
+
+        const filtered = all.filter(
+          (d) =>
+            d.specialty.trim().toLowerCase() ===
+            selectedSpecialty.trim().toLowerCase(),
+        );
+        console.log("[MarkExam] Médicos filtrados:", filtered.length, JSON.stringify(filtered));
+
         setDoctors(all);
-        setFilteredDoctors(all.filter((d) => d.specialty === selectedSpecialty));
-      } catch {
-        Alert.alert("Erro", "Não foi possível carregar os médicos.");
+        setFilteredDoctors(filtered);
+      } catch (err: any) {
+        const msg = err?.message ?? String(err);
+        console.error("[MarkExam] ERRO ao carregar médicos:", msg);
+        Alert.alert("Erro ao carregar médicos", msg);
       } finally {
         setLoading(false);
       }
     };
     load();
   }, [selectedSpecialty]);
-
 
   useEffect(() => {
     if (!selectedDoctor || !selectedDate) return;
@@ -115,8 +134,10 @@ export default function MarkExam() {
         const takenHours = takenConsults.map((c) => c.time);
         const free = getAvailableHours(selectedDoctor, takenHours);
         setAvailableHours(free);
-      } catch {
-        Alert.alert("Erro", "Não foi possível carregar os horários.");
+      } catch (err: any) {
+        const msg = err?.message ?? String(err);
+        console.error("[MarkExam] ERRO ao carregar horários:", msg);
+        Alert.alert("Erro ao carregar horários", msg);
       } finally {
         setLoading(false);
       }
@@ -144,8 +165,10 @@ export default function MarkExam() {
       Alert.alert("Sucesso", "Consulta agendada com sucesso!", [
         { text: "OK", onPress: () => navigation.goBack() },
       ]);
-    } catch {
-      Alert.alert("Erro", "Não foi possível agendar a consulta.");
+    } catch (err: any) {
+      const msg = err?.message ?? String(err);
+      console.error("[MarkExam] ERRO ao confirmar consulta:", msg);
+      Alert.alert("Erro ao agendar", msg);
     } finally {
       setLoading(false);
     }
@@ -189,7 +212,6 @@ export default function MarkExam() {
         <ActivityIndicator size="large" color="#22C55E" style={{ marginTop: 20 }} />
       )}
 
-      {}
       {!loading && step === 1 && (
         <FlatList
           data={patients}
@@ -222,12 +244,22 @@ export default function MarkExam() {
         />
       )}
 
-      {}
       {!loading && step === 2 && (
         <ScrollView contentContainerStyle={styles.list}>
-          {specialties.map((item) => (
+          {loadError ? (
+            <Text style={{ color: "red", textAlign: "center", marginBottom: 12 }}>
+              ⚠️ Erro ao carregar:{"\n"}{loadError}
+            </Text>
+          ) : specialties.length === 0 ? (
+            <Text style={{ color: "#888", textAlign: "center", marginBottom: 12 }}>
+              Nenhuma especialidade encontrada.{"\n"}
+              Verifique se há documentos na coleção "doctors" no Firestore.
+            </Text>
+          ) : null}
+
+          {specialties.map((item, index) => (
             <TouchableOpacity
-              key={item}
+              key={`specialty-${item}-${index}`}
               style={styles.specialtyCard}
               onPress={() => {
                 setSelectedSpecialty(item);
@@ -237,18 +269,25 @@ export default function MarkExam() {
               <Text style={styles.specialtyText}>{item}</Text>
             </TouchableOpacity>
           ))}
+
           <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
             <Text style={styles.backText}>Voltar</Text>
           </TouchableOpacity>
         </ScrollView>
       )}
 
-      {}
       {!loading && step === 3 && (
         <ScrollView contentContainerStyle={styles.list}>
-          {filteredDoctors.map((item) => (
+          {filteredDoctors.length === 0 ? (
+            <Text style={{ color: "#888", textAlign: "center", marginBottom: 12 }}>
+              Nenhum médico encontrado para "{selectedSpecialty}".{"\n"}
+              Verifique o campo "specialty" nos documentos do Firestore.
+            </Text>
+          ) : null}
+
+          {filteredDoctors.map((item, index) => (
             <TouchableOpacity
-              key={item.id}
+              key={item.id ?? `doctor-${index}`}
               style={styles.doctorCard}
               onPress={() => {
                 setSelectedDoctor(item);
@@ -264,13 +303,13 @@ export default function MarkExam() {
               </View>
             </TouchableOpacity>
           ))}
+
           <TouchableOpacity style={styles.backButton} onPress={() => setStep(2)}>
             <Text style={styles.backText}>Voltar</Text>
           </TouchableOpacity>
         </ScrollView>
       )}
 
-      {}
       {!loading && step === 4 && (
         <View style={{ flex: 1 }}>
           <View style={styles.legendCard}>
@@ -299,7 +338,6 @@ export default function MarkExam() {
                 onPress={() => setSelectedDate(date)}
               >
                 <Text style={styles.dayText}>{date}</Text>
-
                 {selectedDate === date && (
                   <View style={styles.scheduleContainer}>
                     {availableHours.length === 0 ? (
@@ -328,7 +366,6 @@ export default function MarkExam() {
             <TouchableOpacity style={styles.backButtonBottom} onPress={() => setStep(3)}>
               <Text style={styles.backText}>Voltar</Text>
             </TouchableOpacity>
-
             <TouchableOpacity
               style={[
                 styles.confirmButton,
