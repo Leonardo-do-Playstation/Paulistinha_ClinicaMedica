@@ -28,15 +28,23 @@ export default function Home() {
         <Header />
 
         <View style={{ width: "100%", alignItems: "center" }}>
-
           {isMedico && (
-            <HomeCard
-              icon="📋"
-              title="Minha Agenda"
-              subtitle="Visualizar consultas agendadas"
-              color="#14B8A6"
-              onPress={() => navigation.navigate("ViewSchedule")}
-            />
+            <>
+              <HomeCard
+                icon="📋"
+                title="Minha Agenda"
+                subtitle="Visualizar consultas agendadas"
+                color="#14B8A6"
+                onPress={() => navigation.navigate("ViewSchedule")}
+              />
+              <HomeCard
+                icon="🩺"
+                title="Realizar Consulta"
+                subtitle="Registrar atendimento em andamento"
+                color="#009689"
+                onPress={() => navigation.navigate("RealizeExam")}
+              />
+            </>
           )}
 
           {!isMedico && (

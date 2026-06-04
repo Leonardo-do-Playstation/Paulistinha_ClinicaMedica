@@ -3,15 +3,17 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   TextInput,
   ActivityIndicator,
   Alert,
+  Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { TitleCard } from "../../../components/TitleCard/TitleCard";
 import { styles } from "./RealizeExamDetailStyle";
 import { markAsRealized } from "../../../Services/ConsultService/consultService";
+import { KeyboardWrapper } from "../../../components/KeyboardWrapper/KeyboardWrapper";
 
 export default function RealizeExamDetails({ route }: any) {
   const navigation: any = useNavigation();
@@ -33,7 +35,7 @@ export default function RealizeExamDetails({ route }: any) {
 
   const toggleProcedure = (proc: string) => {
     setSelectedProcedures((prev) =>
-      prev.includes(proc) ? prev.filter((p) => p !== proc) : [...prev, proc]
+      prev.includes(proc) ? prev.filter((p) => p !== proc) : [...prev, proc],
     );
   };
 
@@ -52,7 +54,10 @@ export default function RealizeExamDetails({ route }: any) {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <TitleCard
         title={exam.patientName}
         subtitle="Detalhes da Consulta"
@@ -60,68 +65,70 @@ export default function RealizeExamDetails({ route }: any) {
         onBack={() => navigation.goBack()}
       />
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Procedimentos Realizados</Text>
-        {procedures.map((proc) => (
+      <KeyboardWrapper contentContainerStyle={styles.container}>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Procedimentos Realizados</Text>
+          {procedures.map((proc) => (
+            <TouchableOpacity
+              key={proc}
+              style={styles.checkboxRow}
+              onPress={() => toggleProcedure(proc)}
+            >
+              <View
+                style={[
+                  styles.checkbox,
+                  selectedProcedures.includes(proc) && styles.checkboxSelected,
+                ]}
+              />
+              <Text>{proc}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Laudo</Text>
+          <TextInput
+            style={styles.textArea}
+            placeholder="Laudo do paciente"
+            value={laudo}
+            onChangeText={setLaudo}
+            multiline
+          />
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Receita</Text>
+          <TextInput
+            placeholder="Remédios a serem tomados"
+            style={styles.textArea}
+            value={receita}
+            onChangeText={setReceita}
+            multiline
+          />
+        </View>
+
+        <View style={styles.buttonContainer}>
           <TouchableOpacity
-            key={proc}
-            style={styles.checkboxRow}
-            onPress={() => toggleProcedure(proc)}
+            style={styles.cancelButton}
+            onPress={() => navigation.goBack()}
+            disabled={loading}
           >
-            <View
-              style={[
-                styles.checkbox,
-                selectedProcedures.includes(proc) && styles.checkboxSelected,
-              ]}
-            />
-            <Text>{proc}</Text>
+            <Text style={styles.cancelText}>Cancelar</Text>
           </TouchableOpacity>
-        ))}
-      </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Laudo</Text>
-        <TextInput
-          style={styles.textArea}
-          placeholder="Laudo do paciente"
-          value={laudo}
-          onChangeText={setLaudo}
-          multiline
-        />
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Receita</Text>
-        <TextInput
-          placeholder="Remédios a serem tomados"
-          style={styles.textArea}
-          value={receita}
-          onChangeText={setReceita}
-          multiline
-        />
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={() => navigation.goBack()}
-          disabled={loading}
-        >
-          <Text style={styles.cancelText}>Cancelar</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.finishButton}
-          onPress={handleFinish}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.finishText}>Finalizar consulta</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <TouchableOpacity
+            style={styles.finishButton}
+            onPress={handleFinish}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.finishText}>Finalizar consulta</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </KeyboardWrapper>
+    </KeyboardAvoidingView>
   );
 }

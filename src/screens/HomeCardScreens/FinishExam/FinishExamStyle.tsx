@@ -1,27 +1,36 @@
 import { StyleSheet } from "react-native";
 
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F3F4F6",
-  },
-
+export const s = StyleSheet.create({
   summaryCard: {
     backgroundColor: "#FEF9C3",
     borderColor: "#FACC15",
     borderWidth: 1,
-    margin: 15,
-    padding: 15,
+    padding: 14,
     borderRadius: 12,
+    marginBottom: 15,
   },
-
-  summaryText: {
-    fontWeight: "bold",
-    marginBottom: 5,
+  summaryTxt: { fontWeight: "bold", color: "#78350F" },
+  card: {
+    flexDirection: "row",
+    backgroundColor: "#FFF",
+    borderRadius: 14,
+    marginBottom: 12,
+    padding: 14,
+    alignItems: "center",
+    elevation: 2,
   },
-
-  list: {
-    paddingHorizontal: 15,
-    paddingBottom: 20,
+  left: { marginRight: 12 },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#FEF3C7",
+    justifyContent: "center",
+    alignItems: "center",
   },
+  avatarTxt: { fontSize: 20, fontWeight: "bold", color: "#F59E0B" },
+  body: { flex: 1, gap: 2 },
+  name: { fontSize: 16, fontWeight: "bold", color: "#1E293B" },
+  info: { fontSize: 13, color: "#64748B" },
+  arrow: { fontSize: 24, color: "#CBD5E1" },
 });

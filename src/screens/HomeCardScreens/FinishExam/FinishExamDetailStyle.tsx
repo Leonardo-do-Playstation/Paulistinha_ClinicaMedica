@@ -1,98 +1,80 @@
 import { StyleSheet } from "react-native";
 
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F3F4F6",
-  },
-
+export const s = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     margin: 15,
     padding: 15,
     borderRadius: 12,
-
     elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+    marginBottom: 0,
+    marginTop: 15,
   },
-
   cardTitle: {
     fontWeight: "bold",
-    marginBottom: 10,
+    fontSize: 15,
+    marginBottom: 12,
+    color: "#1E293B",
   },
-
-  checkboxRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-
-  checkbox: {
-    width: 18,
-    height: 18,
-    borderWidth: 1,
-    borderColor: "#9CA3AF",
-    marginRight: 10,
-    borderRadius: 4,
-  },
-
-  checkboxSelected: {
-    backgroundColor: "#F59E0B",
-    borderColor: "#F59E0B",
-  },
-
-  inputLabel: {
-    marginTop: 10,
-    fontWeight: "bold",
-  },
-
-  input: {
-    backgroundColor: "#F9FAFB",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 5,
-  },
-
-  textArea: {
-    backgroundColor: "#F9FAFB",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 5,
-    minHeight: 80,
-  },
-
-  buttonContainer: {
+  row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    margin: 15,
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F1F5F9",
   },
-
-  cancelButton: {
-    backgroundColor: "#D1D5DB",
-    padding: 15,
-    borderRadius: 10,
-    flex: 1,
+  label: { color: "#64748B", fontSize: 13 },
+  value: {
+    color: "#1E293B",
+    fontSize: 13,
+    fontWeight: "500",
+    maxWidth: "60%",
+    textAlign: "right",
+  },
+  checkRow: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: "#CBD5E1",
+    borderRadius: 5,
     marginRight: 10,
-    alignItems: "center",
   },
-
-  finishButton: {
-    backgroundColor: "#F59E0B",
-    padding: 15,
+  checkboxOn: { backgroundColor: "#F59E0B", borderColor: "#F59E0B" },
+  inputLabel: {
+    marginTop: 12,
+    fontWeight: "600",
+    color: "#334155",
+    marginBottom: 4,
+  },
+  textArea: {
+    backgroundColor: "#F8FAFC",
+    padding: 10,
     borderRadius: 10,
+    minHeight: 80,
+    textAlignVertical: "top",
+  },
+  btns: {
+    flexDirection: "row",
+    margin: 15,
+    gap: 10,
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  backBtn: {
     flex: 1,
+    backgroundColor: "#E2E8F0",
+    padding: 16,
+    borderRadius: 12,
     alignItems: "center",
   },
-
-  cancelText: {
-    fontWeight: "bold",
+  backTxt: { fontWeight: "bold", color: "#475569" },
+  payBtn: {
+    flex: 2,
+    backgroundColor: "#F59E0B",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
   },
-
-  finishText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
+  payTxt: { color: "#fff", fontWeight: "bold", fontSize: 15 },
 });

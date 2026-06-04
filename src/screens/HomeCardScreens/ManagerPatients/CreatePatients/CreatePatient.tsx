@@ -4,14 +4,16 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
   ActivityIndicator,
   Alert,
+  Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { TitleCard } from "../../../../components/TitleCard/TitleCard";
 import { styles } from "./CreatePatientStyle";
 import { createPatient } from "../../../../Services/PatientService/patientService";
+import { KeyboardWrapper } from "../../../../components/KeyboardWrapper/KeyboardWrapper";
 
 export default function CreatePatient() {
   const navigation: any = useNavigation();
@@ -29,25 +31,44 @@ export default function CreatePatient() {
 
   async function handleSave() {
     if (!name || !cpf || !birthDate || !phone) {
-      Alert.alert("Campos obrigatórios", "Preencha nome, CPF, data de nascimento e telefone.");
+      Alert.alert(
+        "Campos obrigatórios",
+        "Preencha nome, CPF, data de nascimento e telefone.",
+      );
       return;
     }
 
     try {
       setLoading(true);
-      await createPatient({ name, cpf, birthDate, phone, email, address, city, uf, observations: notes });
+      await createPatient({
+        name,
+        cpf,
+        birthDate,
+        phone,
+        email,
+        address,
+        city,
+        uf,
+        observations: notes,
+      });
       Alert.alert("Sucesso", "Paciente cadastrado com sucesso!", [
         { text: "OK", onPress: () => navigation.goBack() },
       ]);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível cadastrar o paciente. Tente novamente.");
+      Alert.alert(
+        "Erro",
+        "Não foi possível cadastrar o paciente. Tente novamente.",
+      );
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#F3F4F6" }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: "#F3F4F6" }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <TitleCard
         title="Cadastro de Cliente"
         subtitle="Dados básicos do paciente"
@@ -55,7 +76,7 @@ export default function CreatePatient() {
         onBack={() => navigation.goBack()}
       />
 
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+      <KeyboardWrapper contentContainerStyle={styles.container}>
         <View style={styles.formCard}>
           <Text style={styles.label}>Nome Completo *</Text>
           <TextInput
@@ -166,7 +187,7 @@ export default function CreatePatient() {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
-    </View>
+      </KeyboardWrapper>
+    </KeyboardAvoidingView>
   );
 }

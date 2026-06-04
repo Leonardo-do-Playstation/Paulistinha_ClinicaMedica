@@ -4,9 +4,10 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
   ActivityIndicator,
   Alert,
+  Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -16,6 +17,7 @@ import {
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from "../../Config/Firebase";
 import { styles } from "./LoginStyles";
+import { KeyboardWrapper } from "../../components/KeyboardWrapper/KeyboardWrapper";
 
 async function getUserRole(email: string): Promise<"medico" | "secretaria"> {
   const doctorsRef = collection(db, "doctors");
@@ -79,10 +81,13 @@ export default function Login() {
       Alert.alert(
         "E-mail enviado",
         "Verifique sua caixa de entrada para redefinir a senha.",
-        [{ text: "OK", onPress: () => setShowRecuperar(false) }]
+        [{ text: "OK", onPress: () => setShowRecuperar(false) }],
       );
     } catch {
-      Alert.alert("Erro", "Não foi possível enviar o e-mail. Verifique o endereço.");
+      Alert.alert(
+        "Erro",
+        "Não foi possível enviar o e-mail. Verifique o endereço.",
+      );
     } finally {
       setLoadingRecuperar(false);
     }
@@ -90,101 +95,113 @@ export default function Login() {
 
   if (showRecuperar) {
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.icon}>🔑</Text>
-        <Text style={styles.title}>Recuperar Senha</Text>
-        <Text style={styles.subtitle}>Enviaremos um link para seu e-mail</Text>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <KeyboardWrapper contentContainerStyle={styles.container}>
+          <Text style={styles.icon}>🔑</Text>
+          <Text style={styles.title}>Recuperar Senha</Text>
+          <Text style={styles.subtitle}>
+            Enviaremos um link para seu e-mail
+          </Text>
+
+          <View style={styles.card}>
+            <TextInput
+              placeholder="seu@email.com"
+              style={styles.input}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={emailRecuperar}
+              onChangeText={setEmailRecuperar}
+            />
+
+            <TouchableOpacity
+              style={[styles.loginButton, loadingRecuperar && { opacity: 0.6 }]}
+              onPress={handleRecuperarSenha}
+              disabled={loadingRecuperar}
+            >
+              {loadingRecuperar ? (
+                <ActivityIndicator color="#FFF" />
+              ) : (
+                <Text style={styles.loginButtonText}>Enviar instruções</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => setShowRecuperar(false)}
+            >
+              <Text style={styles.backButtonText}>← Voltar ao Login</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardWrapper>
+      </KeyboardAvoidingView>
+    );
+  }
+
+  return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <KeyboardWrapper contentContainerStyle={styles.container}>
+        <Text style={styles.icon}>🏥</Text>
+        <Text style={styles.title}>Clínica Médica</Text>
+        <Text style={styles.subtitle}>Sistema de Atendimento</Text>
 
         <View style={styles.card}>
+          <Text style={styles.cardTitle}>Bem-vindo!</Text>
+
+          <Text style={styles.label}>E-mail</Text>
           <TextInput
             placeholder="seu@email.com"
             style={styles.input}
             keyboardType="email-address"
             autoCapitalize="none"
-            value={emailRecuperar}
-            onChangeText={setEmailRecuperar}
+            value={email}
+            onChangeText={setEmail}
           />
 
+          <Text style={styles.label}>Senha</Text>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              placeholder="Digite sua senha"
+              style={styles.passwordInput}
+              secureTextEntry={!mostrarSenha}
+              value={senha}
+              onChangeText={setSenha}
+            />
+            <TouchableOpacity
+              style={styles.eyeButton}
+              onPress={() => setMostrarSenha((v) => !v)}
+            >
+              <Text style={styles.eyeText}>
+                {mostrarSenha ? "Ocultar" : "Mostrar"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <TouchableOpacity
-            style={[styles.loginButton, loadingRecuperar && { opacity: 0.6 }]}
-            onPress={handleRecuperarSenha}
-            disabled={loadingRecuperar}
+            style={{ alignSelf: "flex-end", marginBottom: 20, marginTop: 4 }}
+            onPress={() => setShowRecuperar(true)}
           >
-            {loadingRecuperar ? (
+            <Text style={styles.forgotText}>Esqueci minha senha</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.loginButton, loading && { opacity: 0.6 }]}
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            {loading ? (
               <ActivityIndicator color="#FFF" />
             ) : (
-              <Text style={styles.loginButtonText}>Enviar instruções</Text>
+              <Text style={styles.loginButtonText}>Entrar</Text>
             )}
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => setShowRecuperar(false)}
-          >
-            <Text style={styles.backButtonText}>← Voltar ao Login</Text>
-          </TouchableOpacity>
         </View>
-      </ScrollView>
-    );
-  }
-
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.icon}>🏥</Text>
-      <Text style={styles.title}>Clínica Médica</Text>
-      <Text style={styles.subtitle}>Sistema de Atendimento</Text>
-
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Bem-vindo!</Text>
-
-        <Text style={styles.label}>E-mail</Text>
-        <TextInput
-          placeholder="seu@email.com"
-          style={styles.input}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
-
-        <Text style={styles.label}>Senha</Text>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            placeholder="Digite sua senha"
-            style={styles.passwordInput}
-            secureTextEntry={!mostrarSenha}
-            value={senha}
-            onChangeText={setSenha}
-          />
-          <TouchableOpacity
-            style={styles.eyeButton}
-            onPress={() => setMostrarSenha((v) => !v)}
-          >
-            <Text style={styles.eyeText}>
-              {mostrarSenha ? "Ocultar" : "Mostrar"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          style={{ alignSelf: "flex-end", marginBottom: 20, marginTop: 4 }}
-          onPress={() => setShowRecuperar(true)}
-        >
-          <Text style={styles.forgotText}>Esqueci minha senha</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.loginButton, loading && { opacity: 0.6 }]}
-          onPress={handleLogin}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#FFF" />
-          ) : (
-            <Text style={styles.loginButtonText}>Entrar</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </KeyboardWrapper>
+    </KeyboardAvoidingView>
   );
 }
