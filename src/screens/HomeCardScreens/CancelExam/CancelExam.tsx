@@ -26,7 +26,6 @@ export default function CancelExam() {
   const fetchConsults = async () => {
     try {
       setLoading(true);
-      // Busca consultas que ainda podem ser canceladas
       const [marcadas, confirmadas] = await Promise.all([
         getConsultsByStatus("Marcada"),
         getConsultsByStatus("Confirmada"),
@@ -47,7 +46,7 @@ export default function CancelExam() {
     }, [])
   );
 
-  // Filtro local por nome do paciente
+ 
   const handleSearch = (text: string) => {
     setSearch(text);
     const term = text.toLowerCase();

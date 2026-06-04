@@ -12,13 +12,12 @@ export default function RealizeExam() {
 
   const [consults, setConsults] = useState<Consult[]>([]);
   const [loading, setLoading] = useState(true);
-
   useFocusEffect(
     useCallback(() => {
       const fetch = async () => {
         try {
           setLoading(true);
-
+          // Exibe apenas consultas confirmadas (prontas para atendimento)
           const data = await getConsultsByStatus("Confirmada");
           setConsults(data);
         } catch {
@@ -28,7 +27,7 @@ export default function RealizeExam() {
         }
       };
       fetch();
-    }, []),
+    }, [])
   );
 
   return (
@@ -41,11 +40,7 @@ export default function RealizeExam() {
       />
 
       {loading ? (
-        <ActivityIndicator
-          size="large"
-          color="#009689"
-          style={{ marginTop: 40 }}
-        />
+        <ActivityIndicator size="large" color="#009689" style={{ marginTop: 40 }} />
       ) : (
         <FlatList
           data={consults}

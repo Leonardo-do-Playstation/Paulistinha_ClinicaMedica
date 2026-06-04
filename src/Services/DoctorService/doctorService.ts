@@ -8,7 +8,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../../Config/Firebase";
-import { Doctor } from "../../data/types/doctors";
+import { Doctor } from "../../data/types/doctorTypes";
 
 const COLLECTION = "doctors";
 const doctorsRef = collection(db, COLLECTION);

@@ -5,17 +5,22 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { TitleCard } from "../../../components/TitleCard/TitleCard";
 import { styles } from "./RealizeExamDetailStyle";
-import { PatientHistory } from "../../../components/PatientHistory/PatientHistory";
+import { markAsRealized } from "../../../Services/ConsultService/consultService";
 
 export default function RealizeExamDetails({ route }: any) {
   const navigation: any = useNavigation();
   const { exam } = route.params;
 
   const [selectedProcedures, setSelectedProcedures] = useState<string[]>([]);
+  const [laudo, setLaudo] = useState("");
+  const [receita, setReceita] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const procedures = [
     "Consulta Médica",
@@ -27,41 +32,29 @@ export default function RealizeExamDetails({ route }: any) {
   ];
 
   const toggleProcedure = (proc: string) => {
-    if (selectedProcedures.includes(proc)) {
-      setSelectedProcedures((prev) => prev.filter((p) => p !== proc));
-    } else {
-      setSelectedProcedures((prev) => [...prev, proc]);
-    }
+    setSelectedProcedures((prev) =>
+      prev.includes(proc) ? prev.filter((p) => p !== proc) : [...prev, proc]
+    );
   };
 
-  const history = [
-    {
-      id: 1,
-      date: "15/03/2026",
-      type: "Consulta",
-      doctor: "Dr. Pedro Alves",
-      description: "Pressão controlada",
-    },
-    {
-      id: 2,
-      date: "10/01/2026",
-      type: "Exame",
-      doctor: "Dr. Pedro Alves",
-      description: "Eletrocardiograma normal",
-    },
-    {
-      id: 3,
-      date: "05/11/2025",
-      type: "Consulta",
-      doctor: "Dr. Pedro Alves",
-      description: "Iniciado tratamento",
-    },
-  ];
+  const handleFinish = async () => {
+    try {
+      setLoading(true);
+      await markAsRealized(exam.id);
+      Alert.alert("Consulta finalizada", "O atendimento foi registrado.", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
+    } catch {
+      Alert.alert("Erro", "Não foi possível finalizar a consulta.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
       <TitleCard
-        title={exam.name}
+        title={exam.patientName}
         subtitle="Detalhes da Consulta"
         backgroundColor="#009689"
         onBack={() => navigation.goBack()}
@@ -69,7 +62,6 @@ export default function RealizeExamDetails({ route }: any) {
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Procedimentos Realizados</Text>
-
         {procedures.map((proc) => (
           <TouchableOpacity
             key={proc}
@@ -88,23 +80,12 @@ export default function RealizeExamDetails({ route }: any) {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Histórico do paciente</Text>
-        {history.map((item) => (
-          <PatientHistory
-            key={item.id}
-            date={item.date}
-            type={item.type}
-            doctor={item.doctor}
-            description={item.description}
-          />
-        ))}
-      </View>
-
-      <View style={styles.card}>
         <Text style={styles.cardTitle}>Laudo</Text>
         <TextInput
           style={styles.textArea}
           placeholder="Laudo do paciente"
+          value={laudo}
+          onChangeText={setLaudo}
           multiline
         />
       </View>
@@ -114,6 +95,8 @@ export default function RealizeExamDetails({ route }: any) {
         <TextInput
           placeholder="Remédios a serem tomados"
           style={styles.textArea}
+          value={receita}
+          onChangeText={setReceita}
           multiline
         />
       </View>
@@ -122,17 +105,21 @@ export default function RealizeExamDetails({ route }: any) {
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={() => navigation.goBack()}
+          disabled={loading}
         >
           <Text style={styles.cancelText}>Cancelar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.finishButton}
-          onPress={() => {
-            navigation.goBack();
-          }}
+          onPress={handleFinish}
+          disabled={loading}
         >
-          <Text style={styles.finishText}>Finalizar consulta</Text>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.finishText}>Finalizar consulta</Text>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>

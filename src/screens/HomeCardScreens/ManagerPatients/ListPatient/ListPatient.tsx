@@ -15,7 +15,7 @@ import {
   getPatients,
   deletePatient,
 } from "../../../../Services/PatientService/patientService";
-import { Patient } from "../../../../data/types/patients";
+import { Patient } from "../../../../data/types/patientTypes";
 
 export default function ListPatient() {
   const navigation: any = useNavigation();
@@ -38,14 +38,12 @@ export default function ListPatient() {
     }
   };
 
-  // Recarrega a lista toda vez que a tela recebe foco (ex: ao voltar do CreatePatient)
   useFocusEffect(
     useCallback(() => {
       fetchPatients();
     }, []),
   );
 
-  // Filtro local por nome ou CPF
   useEffect(() => {
     const term = search.toLowerCase();
     setFiltered(
