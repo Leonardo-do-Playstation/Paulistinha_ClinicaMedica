@@ -1,44 +1,34 @@
 import React, { useState, useEffect } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  ScrollView,
-  ActivityIndicator,
-  Alert,
+  View, Text, TouchableOpacity, FlatList,
+  Image, ScrollView, ActivityIndicator, Alert,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { TitleCard } from "../../../components/TitleCard/TitleCard";
 import { styles } from "./MarkExamStyle";
 import { PatientCard } from "../../../components/PatientCard/PatientCard";
 import { getPatients } from "../../../Services/PatientService/patientService";
-import {
-  getDoctors,
-  getSpecialties,
-  getAvailableHours,
-} from "../../../Services/DoctorService/doctorService";
-import {
-  getConsultsByDoctorAndDate,
-  createConsult,
-} from "../../../Services/ConsultService/consultService";
+import { getDoctors, getSpecialties, getAvailableHours } from "../../../Services/DoctorService/doctorService";
+import { getConsultsByDoctorAndDate, createConsult } from "../../../Services/ConsultService/consultService";
 import { Patient } from "../../../data/types/patientTypes";
 import { Doctor } from "../../../data/types/doctorTypes";
 
 export default function MarkExam() {
   const navigation: any = useNavigation();
+  const route: any = useRoute();
 
-  const [step, setStep] = useState(1);
+  // Suporte ao pré-selecionamento de paciente vindo do card "Agendar"
+  const preSelectedPatient: Patient | undefined = route.params?.preSelectedPatient;
+
+  const [step, setStep] = useState(preSelectedPatient ? 2 : 1);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const [patients, setPatients] = useState<Patient[]>([]);
   const [specialties, setSpecialties] = useState<string[]>([]);
-  const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
 
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(preSelectedPatient ?? null);
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [selectedDate, setSelectedDate] = useState("");
@@ -48,11 +38,7 @@ export default function MarkExam() {
   const days = Array.from({ length: 60 }, (_, index) => {
     const date = new Date();
     date.setDate(date.getDate() + index);
-    return date.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+    return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
   });
 
   const legends = [
@@ -68,23 +54,12 @@ export default function MarkExam() {
       try {
         setLoading(true);
         setLoadError(null);
-        console.log("[MarkExam] Carregando pacientes e especialidades...");
-
-        const [patientsData, specialtiesData] = await Promise.all([
-          getPatients(),
-          getSpecialties(),
-        ]);
-
-        console.log("[MarkExam] Pacientes:", patientsData.length, JSON.stringify(patientsData));
-        console.log("[MarkExam] Especialidades:", specialtiesData.length, JSON.stringify(specialtiesData));
-
+        const [patientsData, specialtiesData] = await Promise.all([getPatients(), getSpecialties()]);
         setPatients(patientsData);
         setSpecialties(specialtiesData);
       } catch (err: any) {
-        const msg = err?.message ?? String(err);
-        console.error("[MarkExam] ERRO ao carregar:", msg);
-        setLoadError(msg);
-        Alert.alert("Erro ao carregar", msg);
+        setLoadError(err?.message ?? "Erro desconhecido");
+        Alert.alert("Erro", `Não foi possível carregar os dados.\n\n${err?.message ?? err}`);
       } finally {
         setLoading(false);
       }
@@ -97,24 +72,12 @@ export default function MarkExam() {
     const load = async () => {
       try {
         setLoading(true);
-        console.log("[MarkExam] Buscando médicos para:", selectedSpecialty);
-
         const all = await getDoctors();
-        console.log("[MarkExam] Total médicos no Firestore:", all.length, JSON.stringify(all));
-
-        const filtered = all.filter(
-          (d) =>
-            d.specialty.trim().toLowerCase() ===
-            selectedSpecialty.trim().toLowerCase(),
-        );
-        console.log("[MarkExam] Médicos filtrados:", filtered.length, JSON.stringify(filtered));
-
-        setDoctors(all);
-        setFilteredDoctors(filtered);
+        setFilteredDoctors(all.filter(
+          (d) => d.specialty.trim().toLowerCase() === selectedSpecialty.trim().toLowerCase()
+        ));
       } catch (err: any) {
-        const msg = err?.message ?? String(err);
-        console.error("[MarkExam] ERRO ao carregar médicos:", msg);
-        Alert.alert("Erro ao carregar médicos", msg);
+        Alert.alert("Erro", `Não foi possível carregar os médicos.\n\n${err?.message ?? err}`);
       } finally {
         setLoading(false);
       }
@@ -127,17 +90,11 @@ export default function MarkExam() {
     const load = async () => {
       try {
         setLoading(true);
-        const takenConsults = await getConsultsByDoctorAndDate(
-          selectedDoctor.id!,
-          selectedDate
-        );
+        const takenConsults = await getConsultsByDoctorAndDate(selectedDoctor.id!, selectedDate);
         const takenHours = takenConsults.map((c) => c.time);
-        const free = getAvailableHours(selectedDoctor, takenHours);
-        setAvailableHours(free);
-      } catch (err: any) {
-        const msg = err?.message ?? String(err);
-        console.error("[MarkExam] ERRO ao carregar horários:", msg);
-        Alert.alert("Erro ao carregar horários", msg);
+        setAvailableHours(getAvailableHours(selectedDoctor, takenHours));
+      } catch {
+        Alert.alert("Erro", "Não foi possível carregar os horários.");
       } finally {
         setLoading(false);
       }
@@ -165,10 +122,8 @@ export default function MarkExam() {
       Alert.alert("Sucesso", "Consulta agendada com sucesso!", [
         { text: "OK", onPress: () => navigation.goBack() },
       ]);
-    } catch (err: any) {
-      const msg = err?.message ?? String(err);
-      console.error("[MarkExam] ERRO ao confirmar consulta:", msg);
-      Alert.alert("Erro ao agendar", msg);
+    } catch {
+      Alert.alert("Erro", "Não foi possível agendar a consulta.");
     } finally {
       setLoading(false);
     }
@@ -180,17 +135,10 @@ export default function MarkExam() {
       <View style={styles.stepsCard}>
         {steps.map((item, index) => (
           <View key={index} style={styles.stepItem}>
-            <View
-              style={[
-                styles.stepCircle,
-                step === index + 1 ? styles.stepActive : styles.stepInactive,
-              ]}
-            >
+            <View style={[styles.stepCircle, step === index + 1 ? styles.stepActive : styles.stepInactive]}>
               <Text style={styles.stepNumber}>{index + 1}</Text>
             </View>
-            <Text style={[styles.stepText, step === index + 1 && styles.stepTextActive]}>
-              {item}
-            </Text>
+            <Text style={[styles.stepText, step === index + 1 && styles.stepTextActive]}>{item}</Text>
           </View>
         ))}
       </View>
@@ -201,115 +149,85 @@ export default function MarkExam() {
     <View style={styles.container}>
       <TitleCard
         title="Marcar Consulta"
-        subtitle={`Passo ${step} de 4`}
+        subtitle={selectedPatient ? `Paciente: ${selectedPatient.name}` : `Passo ${step} de 4`}
         backgroundColor="#22C55E"
         onBack={() => navigation.goBack()}
       />
-
       {renderSteps()}
+      {loading && <ActivityIndicator size="large" color="#22C55E" style={{ marginTop: 20 }} />}
 
-      {loading && (
-        <ActivityIndicator size="large" color="#22C55E" style={{ marginTop: 20 }} />
-      )}
-
+      {/* PASSO 1 — Selecionar Paciente */}
       {!loading && step === 1 && (
         <FlatList
           data={patients}
           keyExtractor={(item) => item.id!}
           contentContainerStyle={styles.list}
-          ListEmptyComponent={
-            <Text style={{ textAlign: "center", color: "#888" }}>
-              Nenhum paciente cadastrado.
-            </Text>
-          }
+          ListEmptyComponent={<Text style={{ textAlign: "center", color: "#888" }}>Nenhum paciente cadastrado.</Text>}
           renderItem={({ item }) => (
             <PatientCard
-              name={item.name}
-              phone={item.phone}
-              cpf={item.cpf}
-              onPress={() => {
-                setSelectedPatient(item);
-                setStep(2);
-              }}
+              name={item.name} phone={item.phone} cpf={item.cpf}
+              onPress={() => { setSelectedPatient(item); setStep(2); }}
             />
           )}
           ListFooterComponent={
-            <TouchableOpacity
-              style={styles.newPatientCard}
-              onPress={() => navigation.navigate("CreatePatient")}
-            >
+            <TouchableOpacity style={styles.newPatientCard} onPress={() => navigation.navigate("CreatePatient")}>
               <Text style={styles.newPatientText}>+ Cadastrar Novo Cliente</Text>
             </TouchableOpacity>
           }
         />
       )}
 
+      {/* PASSO 2 — Selecionar Especialidade */}
       {!loading && step === 2 && (
         <ScrollView contentContainerStyle={styles.list}>
           {loadError ? (
-            <Text style={{ color: "red", textAlign: "center", marginBottom: 12 }}>
-              ⚠️ Erro ao carregar:{"\n"}{loadError}
-            </Text>
+            <Text style={{ color: "red", textAlign: "center", marginBottom: 10 }}>⚠️ Erro: {loadError}</Text>
           ) : specialties.length === 0 ? (
-            <Text style={{ color: "#888", textAlign: "center", marginBottom: 12 }}>
-              Nenhuma especialidade encontrada.{"\n"}
-              Verifique se há documentos na coleção "doctors" no Firestore.
+            <Text style={{ color: "#888", textAlign: "center", marginBottom: 10 }}>
+              Nenhuma especialidade encontrada.{"\n"}Verifique a coleção "doctors" no Firestore.
             </Text>
           ) : null}
-
-          {specialties.map((item, index) => (
-            <TouchableOpacity
-              key={`specialty-${item}-${index}`}
-              style={styles.specialtyCard}
-              onPress={() => {
-                setSelectedSpecialty(item);
-                setStep(3);
-              }}
-            >
+          {specialties.map((item) => (
+            <TouchableOpacity key={item} style={styles.specialtyCard} onPress={() => { setSelectedSpecialty(item); setStep(3); }}>
               <Text style={styles.specialtyText}>{item}</Text>
             </TouchableOpacity>
           ))}
-
-          <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
-            <Text style={styles.backText}>Voltar</Text>
-          </TouchableOpacity>
+          {!preSelectedPatient && (
+            <TouchableOpacity style={styles.backButton} onPress={() => setStep(1)}>
+              <Text style={styles.backText}>Voltar</Text>
+            </TouchableOpacity>
+          )}
         </ScrollView>
       )}
 
+      {/* PASSO 3 — Selecionar Médico */}
       {!loading && step === 3 && (
         <ScrollView contentContainerStyle={styles.list}>
-          {filteredDoctors.length === 0 ? (
-            <Text style={{ color: "#888", textAlign: "center", marginBottom: 12 }}>
-              Nenhum médico encontrado para "{selectedSpecialty}".{"\n"}
-              Verifique o campo "specialty" nos documentos do Firestore.
+          {filteredDoctors.length === 0 && (
+            <Text style={{ color: "#888", textAlign: "center", marginBottom: 10 }}>
+              Nenhum médico encontrado para "{selectedSpecialty}".
             </Text>
-          ) : null}
-
+          )}
           {filteredDoctors.map((item, index) => (
             <TouchableOpacity
               key={item.id ?? `doctor-${index}`}
               style={styles.doctorCard}
-              onPress={() => {
-                setSelectedDoctor(item);
-                setStep(4);
-              }}
+              onPress={() => { setSelectedDoctor(item); setStep(4); }}
             >
-              {item.image ? (
-                <Image source={{ uri: item.image }} style={styles.avatar} />
-              ) : null}
+              {item.image ? <Image source={{ uri: item.image }} style={styles.avatar} /> : null}
               <View>
                 <Text style={styles.doctorName}>{item.name}</Text>
                 <Text style={styles.doctorSpecialty}>{item.specialty}</Text>
               </View>
             </TouchableOpacity>
           ))}
-
           <TouchableOpacity style={styles.backButton} onPress={() => setStep(2)}>
             <Text style={styles.backText}>Voltar</Text>
           </TouchableOpacity>
         </ScrollView>
       )}
 
+      {/* PASSO 4 — Selecionar Data e Horário */}
       {!loading && step === 4 && (
         <View style={{ flex: 1 }}>
           <View style={styles.legendCard}>
@@ -323,7 +241,6 @@ export default function MarkExam() {
               ))}
             </View>
           </View>
-
           <FlatList
             data={days}
             numColumns={2}
@@ -331,10 +248,7 @@ export default function MarkExam() {
             contentContainerStyle={styles.list}
             renderItem={({ item: date }) => (
               <TouchableOpacity
-                style={[
-                  styles.dayCard,
-                  selectedDate === date && { borderColor: "#22C55E", borderWidth: 2 },
-                ]}
+                style={[styles.dayCard, selectedDate === date && { borderColor: "#22C55E", borderWidth: 2 }]}
                 onPress={() => setSelectedDate(date)}
               >
                 <Text style={styles.dayText}>{date}</Text>
@@ -346,10 +260,7 @@ export default function MarkExam() {
                       availableHours.map((hour) => (
                         <TouchableOpacity
                           key={hour}
-                          style={[
-                            styles.scheduleBadge,
-                            selectedTime === hour ? styles.blueCard : styles.greenCard,
-                          ]}
+                          style={[styles.scheduleBadge, selectedTime === hour ? styles.blueCard : styles.greenCard]}
                           onPress={() => setSelectedTime(hour)}
                         >
                           <Text style={styles.scheduleText}>{hour}</Text>
@@ -361,16 +272,12 @@ export default function MarkExam() {
               </TouchableOpacity>
             )}
           />
-
           <View style={styles.bottomButtons}>
             <TouchableOpacity style={styles.backButtonBottom} onPress={() => setStep(3)}>
               <Text style={styles.backText}>Voltar</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[
-                styles.confirmButton,
-                (!selectedDate || !selectedTime) && { opacity: 0.5 },
-              ]}
+              style={[styles.confirmButton, (!selectedDate || !selectedTime) && { opacity: 0.5 }]}
               onPress={handleConfirm}
               disabled={!selectedDate || !selectedTime || loading}
             >

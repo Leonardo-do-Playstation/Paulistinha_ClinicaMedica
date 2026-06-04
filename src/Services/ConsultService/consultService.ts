@@ -6,7 +6,6 @@ import {
   updateDoc,
   doc,
   query,
-  orderBy,
   where,
   Timestamp,
 } from "firebase/firestore";
@@ -20,10 +19,22 @@ import {
 const COLLECTION = "consults";
 const consultsRef = collection(db, COLLECTION);
 
+const sortConsults = (list: Consult[]): Consult[] => {
+  const parse = (d: string) => {
+    const [day, month, year] = d.split("/");
+    return new Date(Number(year), Number(month) - 1, Number(day)).getTime();
+  };
+  return list.sort((a, b) => {
+    const dateDiff = parse(a.date) - parse(b.date);
+    if (dateDiff !== 0) return dateDiff;
+    return a.time.localeCompare(b.time);
+  });
+};
+
 export const getConsults = async (): Promise<Consult[]> => {
-  const q = query(consultsRef, orderBy("date"), orderBy("time"));
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Consult);
+  const snapshot = await getDocs(consultsRef);
+  const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Consult);
+  return sortConsults(list);
 };
 
 export const getConsultById = async (id: string): Promise<Consult | null> => {
@@ -36,14 +47,10 @@ export const getConsultById = async (id: string): Promise<Consult | null> => {
 export const getConsultsByStatus = async (
   status: ConsultStatus,
 ): Promise<Consult[]> => {
-  const q = query(
-    consultsRef,
-    where("status", "==", status),
-    orderBy("date"),
-    orderBy("time"),
-  );
+  const q = query(consultsRef, where("status", "==", status));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Consult);
+  const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Consult);
+  return sortConsults(list);
 };
 
 export const getConsultsByDoctorAndDate = async (
@@ -62,16 +69,16 @@ export const getConsultsByDoctorAndDate = async (
 
 export const getTodayConsultsByStatus = async (
   status: ConsultStatus,
-  todayDate: string, // formato "dd/mm/aaaa"
+  todayDate: string,
 ): Promise<Consult[]> => {
   const q = query(
     consultsRef,
     where("status", "==", status),
     where("date", "==", todayDate),
-    orderBy("time"),
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Consult);
+  const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Consult);
+  return list.sort((a, b) => a.time.localeCompare(b.time));
 };
 
 export const createConsult = async (
@@ -129,8 +136,18 @@ export const finishConsult = async (
     hasReturn: boolean;
   },
 ): Promise<void> => {
-  await updateDoc(doc(db, COLLECTION, id), {
-    ...data,
+
+  const clean: Record<string, any> = {
     status: "Realizada" as ConsultStatus,
-  });
+    procedures: data.procedures,
+    paymentMethod: data.paymentMethod,
+    paymentValue: data.paymentValue,
+    hasReturn: data.hasReturn,
+  };
+  if (data.otherProcedures) clean.otherProcedures = data.otherProcedures;
+  if (data.observations) clean.observations = data.observations;
+  if (data.healthPlan) clean.healthPlan = data.healthPlan;
+  if (data.authorizationNumber) clean.authorizationNumber = data.authorizationNumber;
+
+  await updateDoc(doc(db, COLLECTION, id), clean);
 };

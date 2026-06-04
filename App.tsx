@@ -1,19 +1,24 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+import Login from "./src/screens/Login/Login";
+import Home from "./src/screens/Home/Home";
+
 import ManagerPatients from "./src/screens/HomeCardScreens/ManagerPatients/ManagerPatients";
-import CancelExam from "./src/screens/HomeCardScreens/CancelExam/CancelExam";
-import FinishExam from "./src/screens/HomeCardScreens/FinishExam/FinishExam";
+import CreatePatient from "./src/screens/HomeCardScreens/ManagerPatients/CreatePatients/CreatePatient";
+import EditPatient from "./src/screens/HomeCardScreens/ManagerPatients/EditPatients/EditPatient";
+
 import MarkExam from "./src/screens/HomeCardScreens/MarkExam/MarkExam";
+import ConfirmExam from "./src/screens/HomeCardScreens/ConfirmExam/ConfirmExam";
 import RealizeExam from "./src/screens/HomeCardScreens/RealizeExam/RealizeExam";
 import RealizeExamDetail from "./src/screens/HomeCardScreens/RealizeExam/RealizeExamDetail";
-import CreatePatient from "./src/screens/HomeCardScreens/ManagerPatients/CreatePatients/CreatePatient";
-import ViewSchedule from "./src/screens/HomeCardScreens/ViewSchedule/ViewSchedule";
-import Home from "./src/screens/Home/Home";
-import ConfirmExam from "./src/screens/HomeCardScreens/ConfirmExam/ConfirmExam";
-import CancelDetails from "./src/screens/HomeCardScreens/CancelExam/CancelDetails";
+import FinishExam from "./src/screens/HomeCardScreens/FinishExam/FinishExam";
 import FinishExamDetail from "./src/screens/HomeCardScreens/FinishExam/FinishExamDetail";
-import Login from "./src/screens/Login/Login";
+import Payment from "./src/screens/HomeCardScreens/FinishExam/Payment";
+import CancelExam from "./src/screens/HomeCardScreens/CancelExam/CancelExam";
+import CancelDetails from "./src/screens/HomeCardScreens/CancelExam/CancelDetails";
+import ViewSchedule from "./src/screens/HomeCardScreens/ViewSchedule/ViewSchedule";
 
 const Stack = createNativeStackNavigator();
 
@@ -25,15 +30,19 @@ export default function App() {
         <Stack.Screen name="Home" component={Home} />
 
         <Stack.Screen name="ManagerPatients" component={ManagerPatients} />
+        <Stack.Screen name="CreatePatient" component={CreatePatient} />
+        <Stack.Screen name="EditPatient" component={EditPatient} />
+
         <Stack.Screen name="MarkExam" component={MarkExam} />
         <Stack.Screen name="ConfirmExam" component={ConfirmExam} />
         <Stack.Screen name="RealizeExam" component={RealizeExam} />
         <Stack.Screen name="RealizeExamDetail" component={RealizeExamDetail} />
         <Stack.Screen name="FinishExam" component={FinishExam} />
         <Stack.Screen name="FinishExamDetail" component={FinishExamDetail} />
+        <Stack.Screen name="Payment" component={Payment} />
         <Stack.Screen name="CancelExam" component={CancelExam} />
         <Stack.Screen name="CancelDetails" component={CancelDetails} />
-        <Stack.Screen name="CreatePatient" component={CreatePatient} />
+
         <Stack.Screen name="ViewSchedule" component={ViewSchedule} />
       </Stack.Navigator>
     </NavigationContainer>
