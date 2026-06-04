@@ -5,11 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
-
 import { useNavigation } from "@react-navigation/native";
 import { TitleCard } from "../../../../components/TitleCard/TitleCard";
 import { styles } from "./CreatePatientStyle";
+import { createPatient } from "../../../../Services/PatientService/patientService";
 
 export default function CreatePatient() {
   const navigation: any = useNavigation();
@@ -23,26 +25,25 @@ export default function CreatePatient() {
   const [city, setCity] = useState("");
   const [uf, setUf] = useState("");
   const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSave() {
+  async function handleSave() {
     if (!name || !cpf || !birthDate || !phone) {
-      alert("Preencha todos os campos obrigatórios!");
+      Alert.alert("Campos obrigatórios", "Preencha nome, CPF, data de nascimento e telefone.");
       return;
     }
 
-    console.log({
-      name,
-      cpf,
-      birthDate,
-      phone,
-      email,
-      address,
-      city,
-      uf,
-      notes,
-    });
-
-    navigation.goBack();
+    try {
+      setLoading(true);
+      await createPatient({ name, cpf, birthDate, phone, email, address, city, uf, observations: notes });
+      Alert.alert("Sucesso", "Paciente cadastrado com sucesso!", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível cadastrar o paciente. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -54,13 +55,9 @@ export default function CreatePatient() {
         onBack={() => navigation.goBack()}
       />
 
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.formCard}>
           <Text style={styles.label}>Nome Completo *</Text>
-
           <TextInput
             placeholder="Digite o nome completo"
             value={name}
@@ -69,43 +66,43 @@ export default function CreatePatient() {
           />
 
           <Text style={styles.label}>CPF *</Text>
-
           <TextInput
             placeholder="000.000.000-00"
             value={cpf}
             onChangeText={setCpf}
             style={styles.inputStyle}
+            keyboardType="numeric"
           />
 
           <Text style={styles.label}>Data de Nascimento *</Text>
-
           <TextInput
             placeholder="dd/mm/aaaa"
             value={birthDate}
             onChangeText={setBirthDate}
             style={styles.inputStyle}
+            keyboardType="numeric"
           />
 
           <Text style={styles.label}>Telefone *</Text>
-
           <TextInput
             placeholder="(00) 00000-0000"
             value={phone}
             onChangeText={setPhone}
             style={styles.inputStyle}
+            keyboardType="phone-pad"
           />
 
           <Text style={styles.label}>Email</Text>
-
           <TextInput
             placeholder="email@exemplo.com"
             value={email}
             onChangeText={setEmail}
             style={styles.inputStyle}
+            keyboardType="email-address"
+            autoCapitalize="none"
           />
 
           <Text style={styles.label}>Endereço</Text>
-
           <TextInput
             placeholder="Rua, número, bairro"
             value={address}
@@ -116,7 +113,6 @@ export default function CreatePatient() {
           <View style={styles.row}>
             <View style={styles.cityContainer}>
               <Text style={styles.label}>Cidade</Text>
-
               <TextInput
                 placeholder="Cidade"
                 value={city}
@@ -127,19 +123,18 @@ export default function CreatePatient() {
 
             <View style={styles.ufContainer}>
               <Text style={styles.label}>UF</Text>
-
               <TextInput
                 placeholder="UF"
                 value={uf}
-                onChangeText={setUf}
+                onChangeText={(v) => setUf(v.toUpperCase())}
                 style={styles.inputStyle}
                 maxLength={2}
+                autoCapitalize="characters"
               />
             </View>
           </View>
 
           <Text style={styles.label}>Observações</Text>
-
           <TextInput
             placeholder="Alergias, condições especiais..."
             value={notes}
@@ -153,12 +148,21 @@ export default function CreatePatient() {
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={() => navigation.goBack()}
+              disabled={loading}
             >
               <Text style={styles.cancelText}>Cancelar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveText}>Salvar</Text>
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={handleSave}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.saveText}>Salvar</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>

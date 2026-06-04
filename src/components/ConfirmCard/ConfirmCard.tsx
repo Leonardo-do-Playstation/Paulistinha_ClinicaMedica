@@ -8,9 +8,17 @@ type Props = {
   time: string;
   doctor: string;
   specialty: string;
+  onConfirm: () => void;
 };
 
-export function ConfirmCard({ name, phone, time, doctor, specialty }: Props) {
+export function ConfirmCard({
+  name,
+  phone,
+  time,
+  doctor,
+  specialty,
+  onConfirm,
+}: Props) {
   const initial = name.charAt(0).toUpperCase();
 
   return (
@@ -41,7 +49,10 @@ export function ConfirmCard({ name, phone, time, doctor, specialty }: Props) {
         <Text style={styles.infoText}>{specialty}</Text>
       </View>
 
-      <TouchableOpacity style={styles.confirmBtn}>
+      <TouchableOpacity
+        style={styles.confirmBtn}
+        onPress={onConfirm}
+      >
         <Text style={styles.confirmBtnText}>Confirmar Presença</Text>
       </TouchableOpacity>
 

@@ -5,47 +5,72 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "./CancelDetailsStyle";
+import { cancelConsult } from "../../../Services/ConsultService/consultService";
+import { CancelReason } from "../../../data/types/consultTypes";
 
 export default function CancelDetails({ route }: any) {
   const navigation: any = useNavigation();
   const { exam } = route.params;
 
-  const [selectedReason, setSelectedReason] = useState("");
+  const [selectedReason, setSelectedReason] = useState<CancelReason | "">("");
   const [obs, setObs] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const reasons = [
+  const reasons: { id: CancelReason; title: string; subtitle: string }[] = [
     {
-      id: "1",
+      id: "Solicitação do Paciente",
       title: "Solicitação do Paciente",
       subtitle: "Paciente solicitou cancelamento",
     },
     {
-      id: "2",
+      id: "Não Comparecimento",
       title: "Não Comparecimento",
       subtitle: "Paciente não compareceu",
     },
     {
-      id: "3",
+      id: "Indisponibilidade Médico",
       title: "Indisponibilidade Médico",
       subtitle: "Médico não pode atender",
     },
     {
-      id: "4",
+      id: "Outro Motivo",
       title: "Outro Motivo",
       subtitle: "Especificar abaixo",
     },
   ];
 
+  const handleCancel = async () => {
+    if (!selectedReason) {
+      Alert.alert("Atenção", "Selecione o motivo do cancelamento.");
+      return;
+    }
+
+    const canceledBy =
+      selectedReason === "Indisponibilidade Médico" ? "medico" : "secretaria";
+
+    try {
+      setLoading(true);
+      await cancelConsult(exam.id, selectedReason, canceledBy, obs);
+      Alert.alert("Cancelamento realizado", "A consulta foi cancelada.", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
+    } catch {
+      Alert.alert("Erro", "Não foi possível cancelar a consulta.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
-      
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Cancelamento</Text>
-        <Text style={styles.headerName}>{exam.name}</Text>
-
+        <Text style={styles.headerName}>{exam.patientName}</Text>
         <View style={styles.headerRow}>
           <Text style={styles.headerInfo}>📅 {exam.date}</Text>
           <Text style={styles.headerInfo}>⏰ {exam.time}</Text>
@@ -54,12 +79,11 @@ export default function CancelDetails({ route }: any) {
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Dados da Consulta</Text>
-
-        <Text>Paciente: {exam.name}</Text>
-        <Text>Telefone: {exam.phone}</Text>
+        <Text>Paciente: {exam.patientName}</Text>
+        <Text>Telefone: {exam.patientPhone}</Text>
         <Text>Data: {exam.date}</Text>
         <Text>Horário: {exam.time}</Text>
-        <Text>Médico: {exam.doctor}</Text>
+        <Text>Médico: {exam.doctorName}</Text>
       </View>
 
       <View style={styles.card}>
@@ -80,7 +104,6 @@ export default function CancelDetails({ route }: any) {
         ))}
 
         <Text style={styles.obsTitle}>Observações</Text>
-
         <TextInput
           placeholder="Digite o motivo..."
           value={obs}
@@ -92,7 +115,8 @@ export default function CancelDetails({ route }: any) {
 
       <View style={styles.alertCard}>
         <Text>
-          ⚠️ <Text style={styles.bold}>Atenção:</Text> Ação irreversível. O horário ficará disponível.
+          ⚠️ <Text style={styles.bold}>Atenção:</Text> Ação irreversível. O
+          horário ficará disponível.
         </Text>
       </View>
 
@@ -100,18 +124,21 @@ export default function CancelDetails({ route }: any) {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
+          disabled={loading}
         >
           <Text style={styles.backText}>Voltar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.confirmButton}
-          onPress={() => {
-            console.log("Cancelado:", selectedReason, obs);
-            navigation.goBack();
-          }}
+          onPress={handleCancel}
+          disabled={loading}
         >
-          <Text style={styles.confirmText}>Confirmar Cancelamento</Text>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.confirmText}>Confirmar Cancelamento</Text>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>
