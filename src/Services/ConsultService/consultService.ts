@@ -11,7 +11,11 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../../Config/Firebase";
-import { Consult, ConsultStatus, CancelReason } from "../../data/consults";
+import {
+  Consult,
+  ConsultStatus,
+  CancelReason,
+} from "../../data/types/consultTypes";
 
 const COLLECTION = "consults";
 const consultsRef = collection(db, COLLECTION);

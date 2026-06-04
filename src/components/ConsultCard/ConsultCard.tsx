@@ -1,15 +1,10 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { styles } from "./ConsultCardStyles";
+import { Consult } from "../../data/types/consultTypes";
 
 type ConsultCardProps = {
-  data: {
-    id: number;
-    name: string;
-    time: string;
-    doctor: string;
-    specialty: string;
-  };
+  data: Consult;
   onPress: () => void;
 };
 
@@ -23,10 +18,10 @@ export function ConsultCard({ data, onPress }: ConsultCardProps) {
         />
 
         <View>
-          <Text style={styles.name}>{data.name}</Text>
+          <Text style={styles.name}>{data.patientName}</Text>
           <Text style={styles.info}>Horário: {data.time}</Text>
           <Text style={styles.info}>
-            Doutor: {data.doctor} - {data.specialty}
+            Doutor: {data.doctorName} - {data.doctorSpecialty}
           </Text>
         </View>
       </View>

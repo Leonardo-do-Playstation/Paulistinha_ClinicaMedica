@@ -42,14 +42,14 @@ export const styles = StyleSheet.create({
     backgroundColor: "#cbd5e1",
     padding: 10,
     borderRadius: 10,
-    width: "48%",
+    width: "33%",
     alignItems: "center",
   },
   scheduleBtn: {
     backgroundColor: "#d1fae5",
     padding: 10,
     borderRadius: 10,
-    width: "48%",
+    width: "33%",
     alignItems: "center",
   },
   editText: {
@@ -58,6 +58,17 @@ export const styles = StyleSheet.create({
   },
   scheduleText: {
     color: "#15803d",
+    fontWeight: "bold",
+  },
+  deleteBtn: {
+    backgroundColor: "#ff0000",
+    padding: 10,
+    borderRadius: 10,
+    width: "33%",
+    alignItems: "center",
+  },
+  deleteText: {
+    color: "#fff",
     fontWeight: "bold",
   },
 });

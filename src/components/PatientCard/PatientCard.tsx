@@ -6,11 +6,10 @@ type Props = {
   name: string;
   phone: string;
   cpf: string;
-
   showButtons?: boolean;
-
   onEdit?: () => void;
   onSchedule?: () => void;
+  onDelete?: () => void;
   onPress?: () => void;
 };
 
@@ -21,6 +20,7 @@ export function PatientCard({
   showButtons = false,
   onEdit,
   onSchedule,
+  onDelete,
   onPress,
 }: Props) {
   const initial = name.charAt(0).toUpperCase();
@@ -52,6 +52,12 @@ export function PatientCard({
           <TouchableOpacity style={styles.scheduleBtn} onPress={onSchedule}>
             <Text style={styles.scheduleText}>Agendar</Text>
           </TouchableOpacity>
+
+          {onDelete && (
+            <TouchableOpacity style={styles.deleteBtn} onPress={onDelete}>
+              <Text style={styles.deleteText}>Excluir</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </TouchableOpacity>

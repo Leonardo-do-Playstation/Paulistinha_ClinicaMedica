@@ -4,7 +4,7 @@ import { TitleCard } from "../../../components/TitleCard/TitleCard";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "./FinishExamStyle";
 import { ConsultCard } from "../../../components/ConsultCard/ConsultCard";
-import { consults } from "../../../data/consults";
+import { consults } from "../../../data/types/consultTypes";
 
 export default function FinishExam() {
   const navigation: any = useNavigation();

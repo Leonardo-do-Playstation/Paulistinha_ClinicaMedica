@@ -12,7 +12,7 @@ import {
   QueryConstraint,
 } from "firebase/firestore";
 import { db } from "../../Config/Firebase";
-import { Patient } from "../../data/patients";
+import { Patient } from "../../data/types/patients";
 
 const COLLECTION = "patients";
 const patientsRef = collection(db, COLLECTION);

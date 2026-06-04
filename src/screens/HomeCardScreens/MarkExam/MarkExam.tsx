@@ -11,7 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { TitleCard } from "../../../components/TitleCard/TitleCard";
 import { styles } from "./MarkExamStyle";
 import { PatientCard } from "../../../components/PatientCard/PatientCard";
-import { patients } from "../../../data/patients";
+import { patients } from "../../../data/types/patients";
 
 export default function MarkExam() {
   const navigation: any = useNavigation();

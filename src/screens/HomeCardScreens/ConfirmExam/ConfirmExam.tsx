@@ -3,7 +3,7 @@ import { TitleCard } from "../../../components/TitleCard/TitleCard";
 import { FlatList, View } from "react-native";
 import { styles } from "./ConfirmExamStyles";
 import { ConfirmCard } from "../../../components/ConfirmCard/ConfirmCard";
-import { consults } from "../../../data/consults";
+import { consults } from "../../../data/types/consultTypes";
 import { useNavigation } from "@react-navigation/native";
 
 export default function ConfirmExam() {
