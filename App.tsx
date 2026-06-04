@@ -8,7 +8,7 @@ import MarkExam from "./src/screens/HomeCardScreens/MarkExam/MarkExam";
 import RealizeExam from "./src/screens/HomeCardScreens/RealizeExam/RealizeExam";
 import RealizeExamDetail from "./src/screens/HomeCardScreens/RealizeExam/RealizeExamDetail";
 import CreatePatient from "./src/screens/HomeCardScreens/ManagerPatients/CreatePatients/CreatePatient";
-
+import ViewSchedule from "./src/screens/HomeCardScreens/ViewSchedule/ViewSchedule";
 import Home from "./src/screens/Home/Home";
 import ConfirmExam from "./src/screens/HomeCardScreens/ConfirmExam/ConfirmExam";
 import CancelDetails from "./src/screens/HomeCardScreens/CancelExam/CancelDetails";
@@ -19,8 +19,6 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    //Routes
-
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={Login} />
@@ -36,6 +34,7 @@ export default function App() {
         <Stack.Screen name="CancelExam" component={CancelExam} />
         <Stack.Screen name="CancelDetails" component={CancelDetails} />
         <Stack.Screen name="CreatePatient" component={CreatePatient} />
+        <Stack.Screen name="ViewSchedule" component={ViewSchedule} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -5,88 +5,121 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  Switch,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { auth, db } from "../../Config/Firebase";
 import { styles } from "./LoginStyles";
+
+async function getUserRole(email: string): Promise<"medico" | "secretaria"> {
+  const doctorsRef = collection(db, "doctors");
+  const q = query(doctorsRef, where("email", "==", email.toLowerCase().trim()));
+  const snapshot = await getDocs(q);
+  return snapshot.empty ? "secretaria" : "medico";
+}
 
 export default function Login() {
   const navigation: any = useNavigation();
 
-  const [tipoUsuario, setTipoUsuario] = useState<"cpf" | "crm">("cpf");
-  const [lembrar, setLembrar] = useState(false);
-  const [showRecuperarSenha, setShowRecuperarSenha] = useState(false);
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    navigation.navigate("Home", {
-      tipoUsuario,
-    });
+  const [showRecuperar, setShowRecuperar] = useState(false);
+  const [emailRecuperar, setEmailRecuperar] = useState("");
+  const [loadingRecuperar, setLoadingRecuperar] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email.trim() || !senha) {
+      Alert.alert("Atenção", "Preencha o e-mail e a senha.");
+      return;
+    }
+    try {
+      setLoading(true);
+      await signInWithEmailAndPassword(auth, email.trim(), senha);
+      const role = await getUserRole(email.trim());
+      navigation.navigate("Home", { tipoUsuario: role });
+    } catch (err: any) {
+      const code = err?.code ?? "";
+      let msg = "Não foi possível fazer login.";
+      if (
+        code === "auth/user-not-found" ||
+        code === "auth/wrong-password" ||
+        code === "auth/invalid-credential"
+      ) {
+        msg = "E-mail ou senha incorretos.";
+      } else if (code === "auth/invalid-email") {
+        msg = "E-mail inválido.";
+      } else if (code === "auth/too-many-requests") {
+        msg = "Muitas tentativas. Tente novamente mais tarde.";
+      } else if (code === "auth/network-request-failed") {
+        msg = "Sem conexão com a internet.";
+      }
+      Alert.alert("Erro ao entrar", msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (showRecuperarSenha) {
+  const handleRecuperarSenha = async () => {
+    if (!emailRecuperar.trim()) {
+      Alert.alert("Atenção", "Digite seu e-mail.");
+      return;
+    }
+    try {
+      setLoadingRecuperar(true);
+      await sendPasswordResetEmail(auth, emailRecuperar.trim());
+      Alert.alert(
+        "E-mail enviado",
+        "Verifique sua caixa de entrada para redefinir a senha.",
+        [{ text: "OK", onPress: () => setShowRecuperar(false) }]
+      );
+    } catch {
+      Alert.alert("Erro", "Não foi possível enviar o e-mail. Verifique o endereço.");
+    } finally {
+      setLoadingRecuperar(false);
+    }
+  };
+
+  if (showRecuperar) {
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.icon}>🔑</Text>
-
         <Text style={styles.title}>Recuperar Senha</Text>
-
-        <Text style={styles.subtitle}>
-          Digite seu {tipoUsuario === "cpf" ? "CPF" : "CRM"}
-        </Text>
+        <Text style={styles.subtitle}>Enviaremos um link para seu e-mail</Text>
 
         <View style={styles.card}>
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity
-              style={[
-                styles.typeButton,
-                tipoUsuario === "cpf" && styles.activeButton,
-              ]}
-              onPress={() => setTipoUsuario("cpf")}
-            >
-              <Text
-                style={
-                  tipoUsuario === "cpf"
-                    ? styles.activeButtonText
-                    : styles.buttonText
-                }
-              >
-                CPF
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.typeButton,
-                tipoUsuario === "crm" && styles.activeButton,
-              ]}
-              onPress={() => setTipoUsuario("crm")}
-            >
-              <Text
-                style={
-                  tipoUsuario === "crm"
-                    ? styles.activeButtonText
-                    : styles.buttonText
-                }
-              >
-                CRM
-              </Text>
-            </TouchableOpacity>
-          </View>
-
           <TextInput
-            placeholder={tipoUsuario === "cpf" ? "000.000.000-00" : "000000"}
+            placeholder="seu@email.com"
             style={styles.input}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={emailRecuperar}
+            onChangeText={setEmailRecuperar}
           />
 
-          <TextInput placeholder="seu@email.com" style={styles.input} />
-
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Enviar instruções</Text>
+          <TouchableOpacity
+            style={[styles.loginButton, loadingRecuperar && { opacity: 0.6 }]}
+            onPress={handleRecuperarSenha}
+            disabled={loadingRecuperar}
+          >
+            {loadingRecuperar ? (
+              <ActivityIndicator color="#FFF" />
+            ) : (
+              <Text style={styles.loginButtonText}>Enviar instruções</Text>
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => setShowRecuperarSenha(false)}
+            onPress={() => setShowRecuperar(false)}
           >
             <Text style={styles.backButtonText}>← Voltar ao Login</Text>
           </TouchableOpacity>
@@ -98,76 +131,58 @@ export default function Login() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.icon}>🏥</Text>
-
       <Text style={styles.title}>Clínica Médica</Text>
-
       <Text style={styles.subtitle}>Sistema de Atendimento</Text>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Bem-vindo!</Text>
 
-        <View style={styles.buttonGroup}>
-          <TouchableOpacity
-            style={[
-              styles.typeButton,
-              tipoUsuario === "cpf" && styles.activeButton,
-            ]}
-            onPress={() => setTipoUsuario("cpf")}
-          >
-            <Text
-              style={
-                tipoUsuario === "cpf"
-                  ? styles.activeButtonText
-                  : styles.buttonText
-              }
-            >
-              👤 CPF
-            </Text>
-          </TouchableOpacity>
+        <Text style={styles.label}>E-mail</Text>
+        <TextInput
+          placeholder="seu@email.com"
+          style={styles.input}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
 
+        <Text style={styles.label}>Senha</Text>
+        <View style={styles.passwordContainer}>
+          <TextInput
+            placeholder="Digite sua senha"
+            style={styles.passwordInput}
+            secureTextEntry={!mostrarSenha}
+            value={senha}
+            onChangeText={setSenha}
+          />
           <TouchableOpacity
-            style={[
-              styles.typeButton,
-              tipoUsuario === "crm" && styles.activeButton,
-            ]}
-            onPress={() => setTipoUsuario("crm")}
+            style={styles.eyeButton}
+            onPress={() => setMostrarSenha((v) => !v)}
           >
-            <Text
-              style={
-                tipoUsuario === "crm"
-                  ? styles.activeButtonText
-                  : styles.buttonText
-              }
-            >
-              👨‍⚕️ CRM
+            <Text style={styles.eyeText}>
+              {mostrarSenha ? "Ocultar" : "Mostrar"}
             </Text>
           </TouchableOpacity>
         </View>
 
-        <TextInput
-          placeholder={tipoUsuario === "cpf" ? "000.000.000-00" : "000000"}
-          style={styles.input}
-        />
+        <TouchableOpacity
+          style={{ alignSelf: "flex-end", marginBottom: 20, marginTop: 4 }}
+          onPress={() => setShowRecuperar(true)}
+        >
+          <Text style={styles.forgotText}>Esqueci minha senha</Text>
+        </TouchableOpacity>
 
-        <TextInput
-          placeholder="Digite sua senha"
-          secureTextEntry
-          style={styles.input}
-        />
-
-        <View style={styles.rememberContainer}>
-          <View style={styles.switchRow}>
-            <Switch value={lembrar} onValueChange={setLembrar} />
-            <Text style={styles.rememberText}>Lembrar-me</Text>
-          </View>
-
-          <TouchableOpacity onPress={() => setShowRecuperarSenha(true)}>
-            <Text style={styles.forgotText}>Esqueci minha senha</Text>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Entrar</Text>
+        <TouchableOpacity
+          style={[styles.loginButton, loading && { opacity: 0.6 }]}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#FFF" />
+          ) : (
+            <Text style={styles.loginButtonText}>Entrar</Text>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>
