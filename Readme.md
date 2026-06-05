@@ -99,28 +99,10 @@ cd Paulistinha_ClinicaMedica
 npm install
 ```
 
-### 3. Configure o Firebase
-
-O projeto utiliza Firebase para autenticação e banco de dados. É necessário criar um projeto no [Firebase Console](https://console.firebase.google.com/) e adicionar o arquivo de configuração.
-
-> Procure pelo arquivo de configuração do Firebase dentro de `src/` (geralmente `firebaseConfig.ts` ou similar) e preencha com as credenciais do seu projeto Firebase:
-
-```ts
-const firebaseConfig = {
-  apiKey: "AIzaSyCZuA0nuhjhjc8PTiOC1kGirIk3rlMuASw",
-  authDomain: "mariaauxiliadora-9619e.firebaseapp.com",
-  projectId: "mariaauxiliadora-9619e",
-  storageBucket: "mariaauxiliadora-9619e.firebasestorage.app",
-  messagingSenderId: "128106462533",
-  appId: "1:128106462533:web:fb4332a32b89dc4ea3922c",
-};
-
-```
-
-### 4. Inicie o projeto
+### 3. Inicie o projeto
 
 ```bash
-npm start
+npm run start
 # ou
 npx expo start
 ```
@@ -164,8 +146,5 @@ Verifique se as credenciais no arquivo de configuração estão corretas e se os
 - [Leonardo-do-Playstation](https://github.com/Leonardo-do-Playstation)
   [Nicolas-Augusto-Almeida](https://github.com/Nicolas-Augusto-Almeida)
   [Walinson111](https://github.com/walinson111)
+  [RyanTorresmo](https://github.com/RyanTorresmo)
 ---
-
-## 📄 Licença
-
-Este projeto é privado e de uso interno da Clínica Maria Auxiliadora.
