@@ -107,13 +107,14 @@ O projeto utiliza Firebase para autenticação e banco de dados. É necessário 
 
 ```ts
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_AUTH_DOMAIN",
-  projectId: "SEU_PROJECT_ID",
-  storageBucket: "SEU_STORAGE_BUCKET",
-  messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-  appId: "SEU_APP_ID"
+  apiKey: "AIzaSyCZuA0nuhjhjc8PTiOC1kGirIk3rlMuASw",
+  authDomain: "mariaauxiliadora-9619e.firebaseapp.com",
+  projectId: "mariaauxiliadora-9619e",
+  storageBucket: "mariaauxiliadora-9619e.firebasestorage.app",
+  messagingSenderId: "128106462533",
+  appId: "1:128106462533:web:fb4332a32b89dc4ea3922c",
 };
+
 ```
 
 ### 4. Inicie o projeto
